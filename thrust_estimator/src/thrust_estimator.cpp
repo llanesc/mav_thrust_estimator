@@ -49,10 +49,10 @@ int main(int argc, char** argv)
       if (ADC.isDRDY()) {
 
         uint32_t* motors = ADC.getChannels();
-        thrust_msg.thrust = ((float)motors[0] - (float)(0x400000))/(float)ForceConvert[0];
-//        thrust_msg.thrust[1] = ((float)motors[1] - (float)(0x400000))/(float)ForceConvert[1];
-//        thrust_msg.thrust[2] = ((float)motors[2] - (float)(0x400000))/(float)ForceConvert[2];
-//        thrust_msg.thrust[3] = ((float)motors[3] - (float)(0x400000))/(float)ForceConvert[3];
+        thrust_msg.thrust[0] = ((float)motors[0] - (float)(0x400000))/(float)ForceConvert[0];
+        thrust_msg.thrust[1] = ((float)motors[1] - (float)(0x400000))/(float)ForceConvert[1];
+        thrust_msg.thrust[2] = ((float)motors[2] - (float)(0x400000))/(float)ForceConvert[2];
+        thrust_msg.thrust[3] = ((float)motors[3] - (float)(0x400000))/(float)ForceConvert[3];
 
         thrust_pub.publish(thrust_msg);
 
