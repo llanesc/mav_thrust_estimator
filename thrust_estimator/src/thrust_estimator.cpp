@@ -6,14 +6,13 @@
 ADS131A04_ADC::ADS131A04 * ADS131A04_ADC::ADS131A04::classPtr;
 
 bool readParameters(ros::NodeHandle& nodeHandle, int* ForceConversion) {
-  uint32_t ForceConversionParam;
-  if (!nodeHandle.getParam("thrust_estimator/Channel1/ForceConversion", ForceConversion[0]))
+  if (!nodeHandle.getParam("thrust_estimator_node/Channel1/ForceConversion", ForceConversion[0]))
     return false;
-  if (!nodeHandle.getParam("thrust_estimator/Channel2/ForceConversion", ForceConversion[1]))
+  if (!nodeHandle.getParam("thrust_estimator_node/Channel2/ForceConversion", ForceConversion[1]))
     return false;
-  if (!nodeHandle.getParam("thrust_estimator/Channel3/ForceConversion", ForceConversion[2]))
+  if (!nodeHandle.getParam("thrust_estimator_node/Channel3/ForceConversion", ForceConversion[2]))
       return false;
-  if (!nodeHandle.getParam("thrust_estimator/Channel4/ForceConversion", ForceConversion[3]))
+  if (!nodeHandle.getParam("thrust_estimator_node/Channel4/ForceConversion", ForceConversion[3]))
     return false;
 
   return true;
