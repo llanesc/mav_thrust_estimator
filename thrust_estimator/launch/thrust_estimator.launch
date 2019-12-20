@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+	<node name="thrust_estimator_node" type="thrust_estimator_node" pkg="thrust_estimator" output="screen">
+		<rosparam command="load" file="$(find thrust_estimator)/config/param.yaml" />
+	</node>
+</launch>
