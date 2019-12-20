@@ -142,12 +142,12 @@ add_executable(${PROJECT_NAME}_node src/thrust_estimator.cpp src/ADS131A04.cpp)
    ADS131A04
    /usr/local/lib/libbcm2835.a
    /usr/local/lib/libwiringPi.so
-#   /usr/lib/arm-linux-gnueabihf/libm.so
-#   /usr/lib/arm-linux-gnueabihf/libcrypt.so
-#   /usr/lib/arm-linux-gnueabihf/librt.so
-   /usr/lib/x86_64-linux-gnu/libm.so
-   /usr/lib/x86_64-linux-gnu/libcrypt.so
-   /usr/lib/x86_64-linux-gnu/librt.so
+   /usr/lib/arm-linux-gnueabihf/libm.so
+   /usr/lib/arm-linux-gnueabihf/libcrypt.so
+   /usr/lib/arm-linux-gnueabihf/librt.so
+#   /usr/lib/x86_64-linux-gnu/libm.so
+#   /usr/lib/x86_64-linux-gnu/libcrypt.so
+#   /usr/lib/x86_64-linux-gnu/librt.so
  )
 
 #############
