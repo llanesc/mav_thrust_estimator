@@ -65,7 +65,7 @@ namespace ADS131A04_ADC {
   /* SYSTEM RESPONSE */
   #define READY             0xFF04
 
-  #define CHANNEL  1
+  #define CHANNEL  0
   static int myFd ;
 
   class ADS131A04 {
