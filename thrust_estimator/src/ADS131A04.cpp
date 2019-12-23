@@ -64,7 +64,7 @@ bool ADS131A04::sendSystemCommand(systemCommands cmd)
        printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
        uint16_t DeviceWordResponse = READY;
        makeBuffer_(responseMask,DeviceWordResponse);
-       } while(rbuffer[0] != responseMask[0] & rbuffer[1] != responseMask[1] & rbuffer[2] != responseMask[2]);
+       } while(rbuffer[0] != responseMask[0] | rbuffer[1] != responseMask[1] | rbuffer[2] != responseMask[2]);
      } else {
        makeBuffer_(rbuffer,CMD_NULL);
        wiringPiSPIDataRW(CHANNEL,rbuffer,sizeof(rbuffer)) ;
@@ -95,7 +95,7 @@ bool ADS131A04::sendSystemCommand(systemCommands cmd)
        printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
        uint16_t DeviceWordResponse = READY;
        makeBuffer_(responseMask,DeviceWordResponse);
-       } while(rbuffer[0] != responseMask[0] & rbuffer[1] != responseMask[1] & rbuffer[2] != responseMask[2]);
+       } while(rbuffer[0] != responseMask[0] | rbuffer[1] != responseMask[1] | rbuffer[2] != responseMask[2]);
      } else {
        makeBuffer_(rbuffer,CMD_NULL);
        wiringPiSPIDataRW(CHANNEL,rbuffer,sizeof(rbuffer)) ;
