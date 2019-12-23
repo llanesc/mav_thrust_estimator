@@ -41,7 +41,7 @@ int main(int argc, char** argv)
   std::cout << ADC.sendSystemCommand(ADS131A04_ADC::CMD_UNLOCK) << std::endl;
 
   std::cout << ADC.sendSystemCommand(ADS131A04_ADC::CMD_RESET) << std::endl;
-
+  rate.sleep();
   std::cout << ADC.sendSystemCommand(ADS131A04_ADC::CMD_UNLOCK) << std::endl;
 
   std::cout << ADC.writeRegister(ADS131A04_ADC::ADDR_CLK1,0x02) << std::endl;
