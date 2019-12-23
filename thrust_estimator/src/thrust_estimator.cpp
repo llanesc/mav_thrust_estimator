@@ -49,7 +49,7 @@ int main(int argc, char** argv)
   printf("%06X\n",ADC.readRegister(ADS131A04_ADC::ADDR_D_SYS_CFG));
   printf("%06X\n",ADC.readRegister(ADS131A04_ADC::ADDR_CLK1));
 
-  std::cout << ADC.writeRegister(ADS131A04_ADC::ADDR_CLK1,0x02) << std::endl;
+//  std::cout << ADC.writeRegister(ADS131A04_ADC::ADDR_CLK1,0x02) << std::endl;
 
   std::cout << ADC.writeRegister(ADS131A04_ADC::ADDR_CLK2,0x20) << std::endl;
 
