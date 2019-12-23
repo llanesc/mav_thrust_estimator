@@ -136,7 +136,7 @@ uint32_t ADS131A04::readRegister(configRegisterAddress configADDR)
   makeBuffer_(rbuffer,CMD_NULL);
   wiringPiSPIDataRW(CHANNEL,rbuffer,sizeof(rbuffer)) ;
 
-  return (rbuffer[0] | uint32_t(rbuffer[1]) << 8 | uint32_t(rbuffer[2]) << 16);
+  return (rbuffer[2] | uint32_t(rbuffer[1]) << 8 | uint32_t(rbuffer[0]) << 16);
 }
 
 bool ADS131A04::writeRegister(configRegisterAddress configADDR, uint16_t data)
