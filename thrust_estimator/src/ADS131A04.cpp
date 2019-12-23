@@ -68,7 +68,6 @@ bool ADS131A04::sendSystemCommand(systemCommands cmd)
        makeBuffer_(rbuffer,CMD_NULL);
        wiringPiSPIDataRW(CHANNEL,rbuffer,sizeof(rbuffer)) ;
        printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
-
        uint16_t DeviceWordResponse = cmd;
        makeBuffer_(responseMask,DeviceWordResponse);
      }
