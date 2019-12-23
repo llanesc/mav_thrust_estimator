@@ -54,8 +54,8 @@ int main(int argc, char** argv)
         thrust_msg.thrust[2] = ((float)motors[2] - (float)(0x400000))/(float)ForceConvert[2];
         thrust_msg.thrust[3] = ((float)motors[3] - (float)(0x400000))/(float)ForceConvert[3];
 
-        thrust_msg.header.frame_id = "baselink";
-        thrust_msg.header.stamp = ros::Time::now();
+//        thrust_msg.header.frame_id = "baselink";
+//        thrust_msg.header.stamp = ros::Time::now();
 
         thrust_pub.publish(thrust_msg);
 
