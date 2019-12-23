@@ -23,7 +23,7 @@ ADS131A04::ADS131A04(){
   DRDY = false;
 
   wiringPiSetup();
-  if ((myFd = wiringPiSPISetupMode(CHANNEL,1000000,1)) < 0)
+  if ((myFd = wiringPiSPISetupMode(CHANNEL,8000000,1)) < 0)
   {
     fprintf (stderr, "Can't open the SPI bus: %s\n", strerror (errno)) ;
     exit (EXIT_FAILURE) ;
@@ -101,7 +101,7 @@ bool ADS131A04::sendSystemCommand(systemCommands cmd)
        wiringPiSPIDataRW(CHANNEL,rbuffer,sizeof(rbuffer)) ;
        printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
        uint16_t DeviceWordResponse = cmd;
-       makeBuffer_(responseMask,DeviceWordResponse);
+       makeBuffer_(responseMask,cmd);
      }
 
      if (rbuffer[0] == responseMask[0] & rbuffer[1] == responseMask[1] & rbuffer[2] == responseMask[2]) {
