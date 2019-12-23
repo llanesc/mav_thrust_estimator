@@ -23,7 +23,7 @@ ADS131A04::ADS131A04(){
   DRDY = false;
 
   wiringPiSetup();
-  if ((myFd = wiringPiSPISetupMode(CHANNEL,8000000,1)) < 0)
+  if ((myFd = wiringPiSPISetupMode(CHANNEL,1000000,1)) < 0)
   {
     fprintf (stderr, "Can't open the SPI bus: %s\n", strerror (errno)) ;
     exit (EXIT_FAILURE) ;
