@@ -23,7 +23,7 @@ int main(int argc, char** argv)
   ros::init(argc,argv,"thrust_estimator");
   ros::NodeHandle nh;
 
-//  ros::Publisher thrust_pub = nh.advertise<thrust_msgs::ThrustStrainGauge>("thrust_estimator/thrust", 10);
+  ros::Publisher thrust_pub = nh.advertise<thrust_msgs::ThrustStrainGauge>("thrust_estimator/thrust", 10);
 
   thrust_msgs::ThrustStrainGauge thrust_msg;
 
@@ -44,8 +44,8 @@ int main(int argc, char** argv)
 
   std::cout << ADC.writeRegister(ADS131A04_ADC::ADDR_CLK2,0x20) << std::endl;
 
-  if (ADC.enableADC() && ADC.sendSystemCommand(ADS131A04_ADC::CMD_WAKEUP)){
-    while(1) {
+  if (ADC.enableADC() & ADC.sendSystemCommand(ADS131A04_ADC::CMD_WAKEUP)){
+    while(ros::ok()) {
       if (ADC.isDRDY()) {
 
         uint32_t* motors = ADC.getChannels();
@@ -54,15 +54,12 @@ int main(int argc, char** argv)
         thrust_msg.thrust[2] = ((float)motors[2] - (float)(0x400000))/(float)ForceConvert[2];
         thrust_msg.thrust[3] = ((float)motors[3] - (float)(0x400000))/(float)ForceConvert[3];
 
-//        thrust_msg.header.frame_id = "baselink";
-//        thrust_msg.header.stamp = ros::Time::now();
-
-//        thrust_pub.publish(thrust_msg);
+        thrust_pub.publish(thrust_msg);
 
       } // if DRDY
 
-//      ros::spinOnce();
-//      rate.sleep();
+      ros::spinOnce();
+      rate.sleep();
     } // while loop
   } // if enableADC & wakeup
   return 1;
