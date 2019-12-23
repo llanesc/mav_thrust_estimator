@@ -44,7 +44,7 @@ int main(int argc, char** argv)
 
   std::cout << ADC.writeRegister(ADS131A04_ADC::ADDR_CLK2,0x20) << std::endl;
 
-  if (ADC.enableADC() & ADC.sendSystemCommand(ADS131A04_ADC::CMD_WAKEUP)){
+  if (ADC.enableADC() && ADC.sendSystemCommand(ADS131A04_ADC::CMD_WAKEUP)){
     while(ros::ok()) {
       if (ADC.isDRDY()) {
 
