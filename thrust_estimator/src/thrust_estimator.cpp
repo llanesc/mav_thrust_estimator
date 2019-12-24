@@ -40,14 +40,15 @@ int main(int argc, char** argv)
 
   std::cout << ADC.sendSystemCommand(ADS131A04_ADC::CMD_UNLOCK) << std::endl;
 
+
+
+  std::cout << ADC.writeRegister(ADS131A04_ADC::ADDR_CLK1,0x82) << std::endl;
+
+  std::cout << ADC.writeRegister(ADS131A04_ADC::ADDR_CLK2,0x20) << std::endl;
+
   printf("%06X\n",ADC.readRegister(ADS131A04_ADC::ADDR_STAT_M2));
   printf("%06X\n",ADC.readRegister(ADS131A04_ADC::ADDR_CLK1));
   printf("%06X\n",ADC.readRegister(ADS131A04_ADC::ADDR_CLK2));
-
-//  std::cout << ADC.writeRegister(ADS131A04_ADC::ADDR_CLK1,0x02) << std::endl;
-//
-//  std::cout << ADC.writeRegister(ADS131A04_ADC::ADDR_CLK2,0x20) << std::endl;
-//
 //  if (ADC.enableADC() & ADC.sendSystemCommand(ADS131A04_ADC::CMD_WAKEUP)){
 //    while(ros::ok()) {
 //      if (ADC.isDRDY()) {
