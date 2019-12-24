@@ -111,7 +111,6 @@ bool ADS131A04::sendSystemCommand(systemCommands cmd)
      }
   }
 
-
 }
 
 uint32_t ADS131A04::readRegister(statusRegisterAddress statusADDR)
