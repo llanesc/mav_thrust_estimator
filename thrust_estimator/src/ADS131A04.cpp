@@ -119,9 +119,12 @@ uint32_t ADS131A04::readRegister(statusRegisterAddress statusADDR)
   unsigned char rbuffer[3];
   uint16_t deviceWord = RREG | statusADDR;
   makeBuffer_(tbuffer,deviceWord);
+  wiringPiSPIDataRW(CHANNEL,tbuffer,sizeof(tbuffer)) ;
+
   makeBuffer_(rbuffer,CMD_NULL);
   wiringPiSPIDataRW(CHANNEL,rbuffer,sizeof(rbuffer)) ;
-  return (rbuffer[0] | uint32_t(rbuffer[1]) << 8 | uint32_t(rbuffer[2]) << 16);
+
+  return (rbuffer[2] | uint32_t(rbuffer[1]) << 8 | uint32_t(rbuffer[0]) << 16);
 }
 
 uint32_t ADS131A04::readRegister(configRegisterAddress configADDR)
