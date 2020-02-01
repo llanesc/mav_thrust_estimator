@@ -35,9 +35,9 @@ int main(int argc, char** argv)
 
   bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);      // The default
   bcm2835_spi_setDataMode(BCM2835_SPI_MODE1);                   // The default
-  bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_65536);    // The default
-  bcm2835_spi_chipSelect(BCM2835_SPI_CS1);                      // The default
-  bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS1, LOW);      // the default
+  bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_32);    // The default
+  bcm2835_spi_chipSelect(BCM2835_SPI_CS0);                      // The default
+  bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS0, LOW);      // the default
 
   uint16_t deviceWord = 0x0655;
   uint16_t null = 0x0000;
@@ -47,12 +47,12 @@ int main(int argc, char** argv)
   printf("%02X %02X %02X \n",buffer[0],buffer[1],buffer[2]);
   bcm2835_spi_transfern(buffer,sizeof(buffer));
   printf("%02X %02X %02X \n\n",buffer[0],buffer[1],buffer[2]);
-  delay(500);
+
   makeBuffer(buffer,deviceWord);
   printf("%02X %02X %02X \n",buffer[0],buffer[1],buffer[2]);
   bcm2835_spi_transfern(buffer,sizeof(buffer));
   printf("%02X %02X %02X \n\n",buffer[0],buffer[1],buffer[2]);
-  delay(500);
+
   makeBuffer(buffer,null);
   printf("%02X %02X %02X \n",buffer[0],buffer[1],buffer[2]);
   bcm2835_spi_transfern(buffer,sizeof(buffer));
