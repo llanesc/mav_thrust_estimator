@@ -22,7 +22,9 @@ ADS131A04::ADS131A04(){
   classPtr = this;
   DRDY = false;
 
-  if ((fd = spi_init("/dev/spidev0.0")) < 0)
+  const char* fileName = "/dev/spidev0.0";
+
+  if ((fd = spi_init(fileName)) < 0)
   {
     ROS_ERROR("spi_init error.");
   }
@@ -35,16 +37,14 @@ ADS131A04::~ADS131A04()
   close(fd);
 }
 
-int ADS131A04::spi_init(std::string fileDir)
+int ADS131A04::spi_init(const char* fileDir)
 {
-  int fileDirLen = fileDir.length();
-  char fileDirChar[fileDirLen + 1];
-  strcpy(fileDirChar, fileDir.c_str());
+
   int fd;
   unsigned int mode, lsb, bits;
   unsigned long speed = 2000000;
 
-  if ((fd = open(fileDirChar,O_RDWR)) < 0)
+  if ((fd = open(fileDir,O_RDWR)) < 0)
   {
     printf("Failed to open the bus.");
     com_serial = 0;

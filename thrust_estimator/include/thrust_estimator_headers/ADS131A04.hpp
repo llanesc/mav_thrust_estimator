@@ -100,7 +100,7 @@ namespace ADS131A04_ADC {
     bool ADC_ENA_;
     uint32_t channels_[4];
     void makeBuffer_(char *buffer, uint16_t data);
-    int spi_init(std::string fileDir);
+    int spi_init(const char* fileDir);
     void spi_read(char * rbuffer,int nbytes,int fd);
     void spi_write(char * buf,int nbytes,int fd);
     int fd;
