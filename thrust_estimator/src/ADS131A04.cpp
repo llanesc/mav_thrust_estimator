@@ -120,9 +120,9 @@ void ADS131A04::spi_read(char * rbuffer,int nbytes,int fd)
   char tbuffer[nbytes];
   memset(tbuffer,0,sizeof tbuffer);
 
-  xfer[0].tx_buf = (unsigned long)tbuffer;
+  xfer[0].tx_buf = strtoul(tbuffer,NULL,0);
   xfer[0].len = nbytes; /* Length of  command to write*/
-  xfer[1].rx_buf = (unsigned long)rbuffer;
+  xfer[1].rx_buf = strtoul(rbuffer,NULL,0);
   xfer[1].len = nbytes; /* Length of Data to read */
   status = ioctl(fd, SPI_IOC_MESSAGE(2), xfer);
   if (status < 0)
@@ -140,7 +140,7 @@ void ADS131A04::spi_write(char * buf,int nbytes,int fd)
 {
   int status;
 
-  xfer[0].tx_buf = (unsigned long)buf;
+  xfer[0].tx_buf = strtoul(buf,NULL,0);
   xfer[0].len = nbytes; /* Length of  command to write*/
 
   status = ioctl(fd, SPI_IOC_MESSAGE(2), xfer);
