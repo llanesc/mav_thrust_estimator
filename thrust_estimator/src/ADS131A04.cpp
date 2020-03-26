@@ -143,7 +143,7 @@ void ADS131A04::spi_write(char * buf,int nbytes,int fd)
   xfer[0].tx_buf = strtoul(buf,NULL,0);
   xfer[0].len = nbytes; /* Length of  command to write*/
 
-  status = ioctl(fd, SPI_IOC_MESSAGE(2), xfer);
+  status = ioctl(fd, SPI_IOC_MESSAGE(1), xfer);
   if (status < 0)
   {
     perror("SPI_IOC_MESSAGE");
