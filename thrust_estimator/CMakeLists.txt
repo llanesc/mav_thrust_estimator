@@ -96,7 +96,7 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES thrust_estimator
   CATKIN_DEPENDS roscpp message_runtime thrust_msgs
-  DEPENDS system_lib
+#  DEPENDS system_lib
 )
 
 ###########
@@ -140,10 +140,7 @@ add_executable(ADS131A04_test src/ADS131A04_test.cpp)
 target_link_libraries(${PROJECT_NAME}_node
    ${catkin_LIBRARIES}
    ADS131A04
-   /usr/local/lib/libwiringPi.so
-   /usr/lib/arm-linux-gnueabihf/libm.so
-   /usr/lib/arm-linux-gnueabihf/libcrypt.so
-   /usr/lib/arm-linux-gnueabihf/librt.so
+
 #   /usr/lib/x86_64-linux-gnu/libm.so
 #   /usr/lib/x86_64-linux-gnu/libcrypt.so
 #   /usr/lib/x86_64-linux-gnu/librt.so
@@ -151,7 +148,6 @@ target_link_libraries(${PROJECT_NAME}_node
  
 target_link_libraries(ADS131A04_test 
 	${catkin_LIBRARIES}
-	/usr/local/lib/libbcm2835.a
 )
 	
 

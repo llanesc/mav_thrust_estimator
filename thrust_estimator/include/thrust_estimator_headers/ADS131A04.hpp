@@ -17,8 +17,15 @@
 #ifndef INCLUDE_THRUST_ESTIMATOR_HEADERS_ADS131A04_HPP_
 #define INCLUDE_THRUST_ESTIMATOR_HEADERS_ADS131A04_HPP_
 
-#include <wiringPiSPI.h>
-#include <wiringPi.h>
+#include <stdint.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <getopt.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <linux/types.h>
+#include <linux/spi/spidev.h>
 #include "ros/ros.h"
 
 namespace ADS131A04_ADC {
@@ -66,7 +73,7 @@ namespace ADS131A04_ADC {
   #define READY             0xFF04
 
   #define CHANNEL  0
-  static int myFd ;
+  static int myFd;
 
   class ADS131A04 {
     volatile bool DRDY;
@@ -92,7 +99,15 @@ namespace ADS131A04_ADC {
    private:
     bool ADC_ENA_;
     uint32_t channels_[4];
-    void makeBuffer_(unsigned char *buffer, uint16_t data);
+    void makeBuffer_(char *buffer, uint16_t data);
+    int spi_init(std::string fileDir);
+    void spi_read(char * rbuffer,int nbytes,int fd);
+    void spi_write(char * buf,int nbytes,int fd);
+    int fd;
+    int com_serial;
+    int failcount;
+
+    struct spi_ioc_transfer xfer[2];
 
   }; // end of class ADS131A04
 

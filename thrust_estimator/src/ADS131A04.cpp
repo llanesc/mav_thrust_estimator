@@ -22,52 +22,165 @@ ADS131A04::ADS131A04(){
   classPtr = this;
   DRDY = false;
 
-  wiringPiSetup();
-  if ((myFd = wiringPiSPISetupMode(CHANNEL,8000000,1)) < 0)
+  if ((fd = spi_init("/dev/spidev0.0")) < 0)
   {
-    fprintf (stderr, "Can't open the SPI bus: %s\n", strerror (errno)) ;
-    exit (EXIT_FAILURE) ;
+    ROS_ERROR("spi_init error.");
   }
 
-  wiringPiISR(3,INT_EDGE_FALLING, &readChannelsExt);
-
   sendSystemCommand(CMD_NULL);
-
 }
 
 ADS131A04::~ADS131A04()
 {
+  close(fd);
+}
+
+int ADS131A04::spi_init(std::string fileDir)
+{
+  int fileDirLen = fileDir.length();
+  char fileDirChar[fileDirLen + 1];
+  strcpy(fileDirChar, fileDir.c_str());
+  int fd;
+  unsigned int mode, lsb, bits;
+  unsigned long speed = 2000000;
+
+  if ((fd = open(fileDirChar,O_RDWR)) < 0)
+  {
+    printf("Failed to open the bus.");
+    com_serial = 0;
+    exit(1);
+  }
+
+  mode = SPI_MODE_2 | SPI_CS_HIGH | SPI_READY;
+
+  if (ioctl(fd, SPI_IOC_WR_MODE, &mode)<0)
+  {
+    perror("can't set spi mode");
+    return -1;
+  }
+
+  if (ioctl(fd, SPI_IOC_RD_MODE, &mode) < 0)
+  {
+    perror("SPI rd_mode");
+    return -1;
+  }
+
+  if (ioctl(fd, SPI_IOC_RD_LSB_FIRST, &lsb) < 0)
+  {
+    perror("SPI rd_lsb_fist");
+    return -1;
+  }
+
+  if (ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, new (__u8[1]){8}) < 0)
+  {
+    perror("can't set bits per word");
+    return -1;
+  }
+
+  if (ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &bits) < 0)
+  {
+    perror("SPI bits_per_word");
+    return -1;
+  }
+
+  if (ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &speed)<0)
+  {
+    perror("can't set max speed hz");
+    return -1;
+  }
+
+  if (ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &speed) < 0)
+  {
+    perror("SPI max_speed_hz");
+    return -1;
+  }
+
+  //xfer[0].tx_buf = (unsigned long)buf;
+  //xfer[0].len = 3; /* Length of  command to write*/
+  xfer[0].cs_change = 0; /* Keep CS activated */
+  xfer[0].delay_usecs = 0, //delay in us
+  xfer[0].speed_hz = 2000000, //speed
+  xfer[0].bits_per_word = 8, // bites per word 8
+
+  //xfer[1].rx_buf = (unsigned long) buf2;
+  //xfer[1].len = 4; /* Length of Data to read */
+  xfer[1].cs_change = 0; /* Keep CS activated */
+  xfer[1].delay_usecs = 0;
+  xfer[1].speed_hz = 2000000;
+  xfer[1].bits_per_word = 8;
+
+  return fd;
 
 }
 
+void ADS131A04::spi_read(char * rbuffer,int nbytes,int fd)
+{
+  int status;
+
+  char tbuffer[nbytes];
+  memset(tbuffer,0,sizeof tbuffer);
+
+  xfer[0].tx_buf = (unsigned long)tbuffer;
+  xfer[0].len = nbytes; /* Length of  command to write*/
+  xfer[1].rx_buf = (unsigned long)rbuffer;
+  xfer[1].len = nbytes; /* Length of Data to read */
+  status = ioctl(fd, SPI_IOC_MESSAGE(2), xfer);
+  if (status < 0)
+  {
+    perror("SPI_IOC_MESSAGE");
+    return;
+  }
+
+  com_serial=1;
+  failcount=0;
+
+}
+
+void ADS131A04::spi_write(char * buf,int nbytes,int fd)
+{
+  int status;
+
+  xfer[0].tx_buf = (unsigned long)buf;
+  xfer[0].len = nbytes; /* Length of  command to write*/
+
+  status = ioctl(fd, SPI_IOC_MESSAGE(2), xfer);
+  if (status < 0)
+  {
+    perror("SPI_IOC_MESSAGE");
+    return;
+  }
+
+  com_serial=1;
+  failcount=0;
+}
+
+
 void ADS131A04::readChannelsExt()
 {
-    ADS131A04::classPtr ->readChannels();
+    ADS131A04::classPtr->readChannels();
 }
 
 bool ADS131A04::sendSystemCommand(systemCommands cmd)
 {
   if (ADC_ENA_) {
-    unsigned char tbuffer[15];
-    unsigned char rbuffer[15];
+    char tbuffer[15];
+    char rbuffer[15];
 
     uint16_t deviceWord = cmd;
      makeBuffer_(tbuffer,deviceWord);
      printf("%02X %02X %02X \n",tbuffer[0],tbuffer[1],tbuffer[2]);
-     wiringPiSPIDataRW(CHANNEL,tbuffer,sizeof(tbuffer)) ;
-     unsigned char responseMask[3];
+     spi_write(tbuffer,sizeof tbuffer,fd);
+     char responseMask[3];
 
      if (cmd == CMD_RESET) {
        do {
-       makeBuffer_(rbuffer,CMD_NULL);
-       wiringPiSPIDataRW(CHANNEL,rbuffer,sizeof(rbuffer));
+       spi_read(rbuffer,sizeof rbuffer,fd);
        printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
        uint16_t DeviceWordResponse = READY;
        makeBuffer_(responseMask,DeviceWordResponse);
        } while(rbuffer[0] != responseMask[0] | rbuffer[1] != responseMask[1] | rbuffer[2] != responseMask[2]);
      } else {
-       makeBuffer_(rbuffer,CMD_NULL);
-       wiringPiSPIDataRW(CHANNEL,rbuffer,sizeof(rbuffer)) ;
+       spi_read(rbuffer,sizeof rbuffer,fd);
        printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
        uint16_t DeviceWordResponse = cmd;
        makeBuffer_(responseMask,DeviceWordResponse);
@@ -79,26 +192,24 @@ bool ADS131A04::sendSystemCommand(systemCommands cmd)
        return false;
      }
   } else {
-    unsigned char tbuffer[3];
-    unsigned char rbuffer[3];
+    char tbuffer[3];
+    char rbuffer[3];
 
     uint16_t deviceWord = cmd;
      makeBuffer_(tbuffer,deviceWord);
      printf("%02X %02X %02X \n",tbuffer[0],tbuffer[1],tbuffer[2]);
-     wiringPiSPIDataRW(CHANNEL,tbuffer,sizeof(tbuffer)) ;
-     unsigned char responseMask[3];
+     spi_write(tbuffer,sizeof tbuffer,fd);
+     char responseMask[3];
 
      if (cmd == CMD_RESET) {
        do {
-       makeBuffer_(rbuffer,CMD_NULL);
-       wiringPiSPIDataRW(CHANNEL,rbuffer,sizeof(rbuffer));
+       spi_read(rbuffer,sizeof rbuffer,fd);
        printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
        uint16_t DeviceWordResponse = READY;
        makeBuffer_(responseMask,DeviceWordResponse);
        } while(rbuffer[0] != responseMask[0] | rbuffer[1] != responseMask[1] | rbuffer[2] != responseMask[2]);
      } else {
-       makeBuffer_(rbuffer,CMD_NULL);
-       wiringPiSPIDataRW(CHANNEL,rbuffer,sizeof(rbuffer)) ;
+       spi_read(rbuffer,sizeof rbuffer,fd);
        printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
        uint16_t DeviceWordResponse = cmd;
        makeBuffer_(responseMask,cmd);
@@ -115,46 +226,43 @@ bool ADS131A04::sendSystemCommand(systemCommands cmd)
 
 uint32_t ADS131A04::readRegister(statusRegisterAddress statusADDR)
 {
-  unsigned char tbuffer[3];
-  unsigned char rbuffer[3];
+  char tbuffer[3];
+  char rbuffer[3];
   uint16_t deviceWord = RREG | statusADDR;
   makeBuffer_(tbuffer,deviceWord);
-  wiringPiSPIDataRW(CHANNEL,tbuffer,sizeof(tbuffer)) ;
+  spi_write(tbuffer,sizeof tbuffer,fd);
 
-  makeBuffer_(rbuffer,CMD_NULL);
-  wiringPiSPIDataRW(CHANNEL,rbuffer,sizeof(rbuffer)) ;
+  spi_read(rbuffer,sizeof rbuffer,fd);
 
   return (rbuffer[2] | uint32_t(rbuffer[1]) << 8 | uint32_t(rbuffer[0]) << 16);
 }
 
 uint32_t ADS131A04::readRegister(configRegisterAddress configADDR)
 {
-  unsigned char tbuffer[3];
-  unsigned char rbuffer[3];
+  char tbuffer[3];
+  char rbuffer[3];
   uint16_t deviceWord = RREG | configADDR;
   makeBuffer_(tbuffer,deviceWord);
-  wiringPiSPIDataRW(CHANNEL,tbuffer,sizeof(tbuffer)) ;
+  spi_write(tbuffer,sizeof tbuffer,fd);
 
-  makeBuffer_(rbuffer,CMD_NULL);
-  wiringPiSPIDataRW(CHANNEL,rbuffer,sizeof(rbuffer)) ;
+  spi_read(rbuffer,sizeof rbuffer,fd);
 
   return (rbuffer[2] | uint32_t(rbuffer[1]) << 8 | uint32_t(rbuffer[0]) << 16);
 }
 
 bool ADS131A04::writeRegister(configRegisterAddress configADDR, uint16_t data)
 {
-  unsigned char tbuffer[3];
-  unsigned char rbuffer[3];
+  char tbuffer[3];
+  char rbuffer[3];
   uint16_t deviceWord = WREG | configADDR | data;
   makeBuffer_(tbuffer,deviceWord);
   printf("%02X %02X %02X \n",tbuffer[0],tbuffer[1],tbuffer[2]);
-  wiringPiSPIDataRW(CHANNEL,tbuffer,sizeof(tbuffer)) ;
+  spi_write(tbuffer,sizeof tbuffer,fd);
 
-  makeBuffer_(rbuffer,CMD_NULL);
-  wiringPiSPIDataRW(CHANNEL,rbuffer,sizeof(rbuffer)) ;
+  spi_read(rbuffer,sizeof rbuffer,fd);
   printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
 
-  unsigned char responseMask[3];
+  char responseMask[3];
   uint16_t DeviceWordResponse = RREG | configADDR | data;
   makeBuffer_(responseMask,DeviceWordResponse);
 
@@ -183,9 +291,9 @@ void ADS131A04::readChannels()
 {
   uint32_t channels[4];
 
-  unsigned char outputBuffer[15];
-  makeBuffer_(outputBuffer,CMD_NULL);
-  wiringPiSPIDataRW(CHANNEL,outputBuffer,sizeof(outputBuffer)) ;
+  char outputBuffer[15];
+  spi_read(outputBuffer,sizeof outputBuffer,fd);
+
 //  printf("%02X %02X %02X %02X %02X %02X\n", outputBuffer[3],outputBuffer[4],outputBuffer[5],outputBuffer[6],outputBuffer[7],outputBuffer[8]);
   channels[0] = (outputBuffer[5] | uint32_t(outputBuffer[4]) << 8 | uint32_t(outputBuffer[3]) << 16);
   channels[1] = (outputBuffer[8] | uint32_t(outputBuffer[7]) << 8 | uint32_t(outputBuffer[6]) << 16);
@@ -210,7 +318,7 @@ uint32_t* ADS131A04::getChannels()
   return channels_;
 }
 
-void ADS131A04::makeBuffer_(unsigned char *buffer, uint16_t data){
+void ADS131A04::makeBuffer_(char *buffer, uint16_t data){
   for(int i = 0;i < sizeof(buffer);i++){
     buffer[i] &= 0x00;
   }

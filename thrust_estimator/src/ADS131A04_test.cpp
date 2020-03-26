@@ -15,51 +15,19 @@
  */
 
 #include "ros/ros.h"
-#include <bcm2835.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <linux/types.h>
+#include <linux/spi/spidev.h>
 
 void makeBuffer(char *buffer, uint16_t data);
 
 
 int main(int argc, char** argv)
 {
-  if (!bcm2835_init())
-  {
-    printf("bcm2835_init failed. Are you running as root??\n");
-    return 1;
-  }
-  if (!bcm2835_spi_begin())
-  {
-    printf("bcm2835_spi_begin failed. Are you running as root??\n");
-    return 1;
-  }
 
-  bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);      // The default
-  bcm2835_spi_setDataMode(BCM2835_SPI_MODE1);                   // The default
-  bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_32);    // The default
-  bcm2835_spi_chipSelect(BCM2835_SPI_CS0);                      // The default
-  bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS0, LOW);      // the default
 
-  uint16_t deviceWord = 0x0655;
-  uint16_t null = 0x0000;
-  char buffer[3];
-
-  makeBuffer(buffer,null);
-  printf("%02X %02X %02X \n",buffer[0],buffer[1],buffer[2]);
-  bcm2835_spi_transfern(buffer,sizeof(buffer));
-  printf("%02X %02X %02X \n\n",buffer[0],buffer[1],buffer[2]);
-
-  makeBuffer(buffer,deviceWord);
-  printf("%02X %02X %02X \n",buffer[0],buffer[1],buffer[2]);
-  bcm2835_spi_transfern(buffer,sizeof(buffer));
-  printf("%02X %02X %02X \n\n",buffer[0],buffer[1],buffer[2]);
-
-  makeBuffer(buffer,null);
-  printf("%02X %02X %02X \n",buffer[0],buffer[1],buffer[2]);
-  bcm2835_spi_transfern(buffer,sizeof(buffer));
-  printf("%02X %02X %02X \n\n",buffer[0],buffer[1],buffer[2]);
-
-  bcm2835_spi_end();
-  bcm2835_close();
   return 0;
 }
 
