@@ -51,7 +51,7 @@ int ADS131A04::spi_init(const char* fileDir)
     exit(1);
   }
 
-  mode = SPI_MODE_2 | SPI_CS_HIGH | SPI_READY;
+  mode = SPI_MODE_2;
 
   if (ioctl(fd, SPI_IOC_WR_MODE, &mode)<0)
   {
