@@ -104,13 +104,12 @@ void ADS131A04::spi_read(std::vector<uint8_t> &data,int fd)
   uint32_t nbytes = data.size();
 
   struct spi_ioc_transfer xfer[2];
+  memset(xfer,0,sizeof xfer);
 
   std::vector<uint8_t> nulldata;
   nulldata.resize(data.size());
   std::fill(nulldata.begin(), nulldata.end(), 0);
 
-  char tbuffer[nbytes];
-  memset(tbuffer,0,sizeof tbuffer);
 
   xfer[0].tx_buf = reinterpret_cast<__u64>(nulldata.data());
   xfer[0].len = nbytes;
@@ -126,7 +125,7 @@ void ADS131A04::spi_read(std::vector<uint8_t> &data,int fd)
   xfer[1].speed_hz = 2000000;
   xfer[1].bits_per_word = 8;
 
-  int status = ioctl(fd, SPI_IOC_MESSAGE(2), &xfer);
+  int status = ioctl(fd, SPI_IOC_MESSAGE(2), xfer);
 
   if (status < 0)
   {
@@ -143,9 +142,9 @@ void ADS131A04::spi_write(std::vector<uint8_t> &data,int fd)
 {
 
   int nbytes = data.size();
-  std::cout << nbytes;
-  struct spi_ioc_transfer xfer[1];
 
+  struct spi_ioc_transfer xfer[1];
+  memset(xfer,0,sizeof xfer);
   xfer[0].tx_buf = reinterpret_cast<__u64>(data.data());
   xfer[0].rx_buf = reinterpret_cast<__u64>(data.data());
   xfer[0].len = nbytes; /* Length of  command to write*/
@@ -154,7 +153,7 @@ void ADS131A04::spi_write(std::vector<uint8_t> &data,int fd)
   xfer[0].speed_hz = 2000000;
   xfer[0].bits_per_word = 8;
 
-  int status = ioctl(fd, SPI_IOC_MESSAGE(1), &xfer);
+  int status = ioctl(fd, SPI_IOC_MESSAGE(1), xfer);
 
   if (status < 0)
   {
