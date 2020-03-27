@@ -336,8 +336,8 @@ void ADS131A04::makeBuffer_(std::vector<uint8_t> *buffer, uint16_t data)
 
   std::fill(buffer->begin(), buffer->end(), 0);
 
-  buffer[1] = data & 0xFF;
-  buffer[0] = data >> 8;
+  (*buffer)[1] = data & 0xFF;
+  (*buffer)[0] = data >> 8;
 }
 
 } /*namespace ADS131A04_ADC*/
