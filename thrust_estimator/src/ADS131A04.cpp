@@ -51,7 +51,7 @@ int ADS131A04::spi_init(const char* fileDir)
     exit(1);
   }
 
-  mode = SPI_MODE_2;
+  mode = SPI_MODE_1;
 
   if (ioctl(fd, SPI_IOC_WR_MODE, &mode)<0)
   {
@@ -120,7 +120,7 @@ void ADS131A04::spi_read(std::vector<uint8_t> &data,int fd)
 
   xfer[1].rx_buf = reinterpret_cast<__u64>(data.data());
   xfer[1].len = nbytes; /* Length of Data to read */
-  xfer[1].cs_change = 0; /* Keep CS activated */
+  xfer[1].cs_change = 1; /* Keep CS activated */
   xfer[1].delay_usecs = 0;
   xfer[1].speed_hz = 2000000;
   xfer[1].bits_per_word = 8;
@@ -148,7 +148,7 @@ void ADS131A04::spi_write(std::vector<uint8_t> &data,int fd)
   xfer[0].tx_buf = reinterpret_cast<__u64>(data.data());
   xfer[0].rx_buf = reinterpret_cast<__u64>(data.data());
   xfer[0].len = nbytes; /* Length of  command to write*/
-  xfer[0].cs_change = 0; /* Keep CS activated */
+  xfer[0].cs_change = 1; /* Keep CS activated */
   xfer[0].delay_usecs = 0;
   xfer[0].speed_hz = 2000000;
   xfer[0].bits_per_word = 8;
