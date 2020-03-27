@@ -101,7 +101,6 @@ int ADS131A04::spi_init(const char* fileDir)
 
 void ADS131A04::spi_read(std::vector<uint8_t> &data,int fd)
 {
-  int status;
   uint32_t nbytes = data.size();
 
   struct spi_ioc_transfer xfer[2];
@@ -127,7 +126,7 @@ void ADS131A04::spi_read(std::vector<uint8_t> &data,int fd)
   xfer[1].speed_hz = 2000000;
   xfer[1].bits_per_word = 8;
 
-  status = ioctl(fd, SPI_IOC_MESSAGE(2), xfer);
+  int status = ioctl(fd, SPI_IOC_MESSAGE(2), &xfer);
 
   if (status < 0)
   {
@@ -142,19 +141,20 @@ void ADS131A04::spi_read(std::vector<uint8_t> &data,int fd)
 
 void ADS131A04::spi_write(std::vector<uint8_t> &data,int fd)
 {
-  int status;
-  int nbytes = data.size();
 
+  int nbytes = data.size();
+  std::cout << nbytes;
   struct spi_ioc_transfer xfer[1];
 
   xfer[0].tx_buf = reinterpret_cast<__u64>(data.data());
+  xfer[0].rx_buf = reinterpret_cast<__u64>(data.data());
   xfer[0].len = nbytes; /* Length of  command to write*/
   xfer[0].cs_change = 0; /* Keep CS activated */
   xfer[0].delay_usecs = 0;
   xfer[0].speed_hz = 2000000;
   xfer[0].bits_per_word = 8;
 
-  status = ioctl(fd, SPI_IOC_MESSAGE(1), xfer);
+  int status = ioctl(fd, SPI_IOC_MESSAGE(1), &xfer);
 
   if (status < 0)
   {
@@ -204,10 +204,10 @@ bool ADS131A04::sendSystemCommand(systemCommands cmd)
        return false;
      }
   } else {
-    std::vector<uint8_t> tbuffer(3);
-    std::vector<uint8_t> rbuffer(3);
+     std::vector<uint8_t> tbuffer(3);
+     std::vector<uint8_t> rbuffer(3);
 
-    uint16_t deviceWord = cmd;
+     uint16_t deviceWord = cmd;
      makeBuffer_(&tbuffer,deviceWord);
      printf("%02X %02X %02X \n",tbuffer[0],tbuffer[1],tbuffer[2]);
      spi_write(tbuffer,fd);
