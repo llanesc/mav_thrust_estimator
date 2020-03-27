@@ -102,7 +102,7 @@ int ADS131A04::spi_init(const char* fileDir)
 void ADS131A04::spi_read(std::vector<uint8_t> &data,int fd)
 {
   int status;
-  int nbytes = data.size();
+  uint32_t nbytes = data.size();
 
   struct spi_ioc_transfer xfer[2];
 
@@ -127,7 +127,7 @@ void ADS131A04::spi_read(std::vector<uint8_t> &data,int fd)
   xfer[1].speed_hz = 2000000;
   xfer[1].bits_per_word = 8;
 
-  status = ioctl(fd, SPI_IOC_MESSAGE(2), &xfer);
+  status = ioctl(fd, SPI_IOC_MESSAGE(2), xfer);
 
   if (status < 0)
   {
@@ -154,7 +154,7 @@ void ADS131A04::spi_write(std::vector<uint8_t> &data,int fd)
   xfer[0].speed_hz = 2000000;
   xfer[0].bits_per_word = 8;
 
-  status = ioctl(fd, SPI_IOC_MESSAGE(1), &xfer);
+  status = ioctl(fd, SPI_IOC_MESSAGE(1), xfer);
 
   if (status < 0)
   {
