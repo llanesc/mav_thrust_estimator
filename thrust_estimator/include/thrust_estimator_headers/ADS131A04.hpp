@@ -99,15 +99,13 @@ namespace ADS131A04_ADC {
    private:
     bool ADC_ENA_;
     uint32_t channels_[4];
-    void makeBuffer_(char *buffer, uint16_t data);
+    void makeBuffer_(std::vector<uint8_t> *buffer, uint16_t data);
     int spi_init(const char* fileDir);
-    void spi_read(char * rbuffer,int nbytes,int fd);
-    void spi_write(char * buf,int nbytes,int fd);
+    void spi_read(std::vector<uint8_t> &data,int fd);
+    void spi_write(std::vector<uint8_t> &data,int fd);
     int fd;
     int com_serial;
     int failcount;
-
-    struct spi_ioc_transfer xfer[2];
 
   }; // end of class ADS131A04
 
