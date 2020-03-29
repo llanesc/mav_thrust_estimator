@@ -148,6 +148,7 @@ target_link_libraries(${PROJECT_NAME}_node
  
 target_link_libraries(ADS131A04_test 
 	${catkin_LIBRARIES}
+	/usr/local/lib/libbcm2835.a
 )
 	
 
