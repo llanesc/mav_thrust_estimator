@@ -104,10 +104,10 @@ void ADS131A04::spi_read(std::vector<uint8_t> &data,int fd)
   nulldata.resize(data.size());
   std::fill(nulldata.begin(), nulldata.end(), 0);
 
-  xfer[0].tx_buf = reinterpret_cast<__u64>(nulldata.data());
+//  xfer[0].tx_buf = reinterpret_cast<__u64>(nulldata.data());
   xfer[0].rx_buf = reinterpret_cast<__u64>(data.data());
   xfer[0].len = nbytes;
-  xfer[0].cs_change = 0; /* Keep CS activated */
+  xfer[0].cs_change = 1; /* Keep CS activated */
   xfer[0].delay_usecs = 0; //delay in us
   xfer[0].speed_hz = 500000; //speed
   xfer[0].bits_per_word = 8; // bites per word 8
@@ -135,7 +135,7 @@ void ADS131A04::spi_write(std::vector<uint8_t> &data,int fd)
   xfer[0].tx_buf = reinterpret_cast<__u64>(data.data());
   xfer[0].rx_buf = reinterpret_cast<__u64>(data.data());
   xfer[0].len = nbytes; /* Length of  command to write*/
-  xfer[0].cs_change = 0; /* Keep CS activated */
+  xfer[0].cs_change = 1; /* Keep CS activated */
   xfer[0].delay_usecs = 0;
   xfer[0].speed_hz = 500000;
   xfer[0].bits_per_word = 8;
@@ -197,6 +197,7 @@ bool ADS131A04::sendSystemCommand(systemCommands cmd)
      makeBuffer_(&tbuffer,deviceWord);
      printf("%02X %02X %02X \n",tbuffer[0],tbuffer[1],tbuffer[2]);
      spi_write(tbuffer,fd);
+     printf("%02X %02X %02X \n",tbuffer[0],tbuffer[1],tbuffer[2]);
      std::vector<uint8_t> responseMask(3);
 
      if (cmd == CMD_RESET) {
