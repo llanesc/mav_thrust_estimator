@@ -21,7 +21,7 @@ namespace ADS131A04_ADC {
 ADS131A04::ADS131A04(){
   classPtr = this;
   DRDY = false;
-
+  ADC_ENA_ = false;
   const char* fileName = "/dev/spidev0.0";
 
   if ((fd = spi_init(fileName)) < 0)
@@ -42,7 +42,7 @@ int ADS131A04::spi_init(const char* fileDir)
 
   int fd;
   unsigned int mode, lsb, bits;
-  unsigned long speed = 2000000;
+  unsigned long speed = 500000;
 
   if ((fd = open(fileDir,O_RDWR)) < 0)
   {
@@ -97,29 +97,22 @@ void ADS131A04::spi_read(std::vector<uint8_t> &data,int fd)
 {
   uint32_t nbytes = data.size();
 
-  struct spi_ioc_transfer xfer[2];
+  struct spi_ioc_transfer xfer[1];
   memset(xfer,0,sizeof xfer);
 
   std::vector<uint8_t> nulldata;
   nulldata.resize(data.size());
   std::fill(nulldata.begin(), nulldata.end(), 0);
 
-
   xfer[0].tx_buf = reinterpret_cast<__u64>(nulldata.data());
+  xfer[0].rx_buf = reinterpret_cast<__u64>(data.data());
   xfer[0].len = nbytes;
   xfer[0].cs_change = 0; /* Keep CS activated */
-  xfer[0].delay_usecs = 0, //delay in us
-  xfer[0].speed_hz = 2000000, //speed
-  xfer[0].bits_per_word = 8, // bites per word 8
+  xfer[0].delay_usecs = 0; //delay in us
+  xfer[0].speed_hz = 500000; //speed
+  xfer[0].bits_per_word = 8; // bites per word 8
 
-  xfer[1].rx_buf = reinterpret_cast<__u64>(data.data());
-  xfer[1].len = nbytes; /* Length of Data to read */
-  xfer[1].cs_change = 0; /* Keep CS activated */
-  xfer[1].delay_usecs = 0;
-  xfer[1].speed_hz = 2000000;
-  xfer[1].bits_per_word = 8;
-
-  int status = ioctl(fd, SPI_IOC_MESSAGE(2), xfer);
+  int status = ioctl(fd, SPI_IOC_MESSAGE(1), xfer);
 
   if (status < 0)
   {
@@ -144,7 +137,7 @@ void ADS131A04::spi_write(std::vector<uint8_t> &data,int fd)
   xfer[0].len = nbytes; /* Length of  command to write*/
   xfer[0].cs_change = 0; /* Keep CS activated */
   xfer[0].delay_usecs = 0;
-  xfer[0].speed_hz = 2000000;
+  xfer[0].speed_hz = 500000;
   xfer[0].bits_per_word = 8;
 
   int status = ioctl(fd, SPI_IOC_MESSAGE(1), xfer);
