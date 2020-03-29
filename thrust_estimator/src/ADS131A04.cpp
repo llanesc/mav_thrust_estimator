@@ -41,7 +41,7 @@ int ADS131A04::spi_init(const char* fileDir)
 {
 
   int fd;
-  unsigned int mode, lsb, bits;
+  unsigned int mode, bits;
   unsigned long speed = 12500000;
 
   if ((fd = open(fileDir,O_RDWR)) < 0)
@@ -50,7 +50,6 @@ int ADS131A04::spi_init(const char* fileDir)
     com_serial = 0;
     exit(1);
   }
-
   bits = 8;
   mode = SPI_MODE_1;
 
@@ -66,7 +65,8 @@ int ADS131A04::spi_init(const char* fileDir)
     return -1;
   }
 
-  if (ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, new (__u8[1]){8}) < 0)
+
+  if (ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bits) < 0)
   {
     perror("can't set bits per word");
     return -1;
@@ -108,7 +108,7 @@ void ADS131A04::spi_read(std::vector<uint8_t> &data,int fd)
   xfer[0].tx_buf = reinterpret_cast<__u64>(nulldata.data());
   xfer[0].rx_buf = reinterpret_cast<__u64>(data.data());
   xfer[0].len = nbytes;
-  xfer[0].cs_change = 1; /* Keep CS activated */
+  xfer[0].cs_change = 0; /* Keep CS activated */
   xfer[0].delay_usecs = 0; //delay in us
   xfer[0].speed_hz = 12500000; //speed
   xfer[0].bits_per_word = 8; // bites per word 8
@@ -136,7 +136,7 @@ void ADS131A04::spi_write(std::vector<uint8_t> &data,int fd)
   xfer[0].tx_buf = reinterpret_cast<__u64>(data.data());
   xfer[0].rx_buf = reinterpret_cast<__u64>(data.data());
   xfer[0].len = nbytes; /* Length of  command to write*/
-  xfer[0].cs_change = 1; /* Keep CS activated */
+  xfer[0].cs_change = 0; /* Keep CS activated */
   xfer[0].delay_usecs = 0;
   xfer[0].speed_hz = 12500000;
   xfer[0].bits_per_word = 8;
@@ -196,9 +196,9 @@ bool ADS131A04::sendSystemCommand(systemCommands cmd)
 
      uint16_t deviceWord = cmd;
      makeBuffer_(&tbuffer,deviceWord);
-     printf("%02X %02X %02X \n",tbuffer[0],tbuffer[1],tbuffer[2]);
+     printf("tbuffer b4: %02X %02X %02X \n",tbuffer[0],tbuffer[1],tbuffer[2]);
      spi_write(tbuffer,fd);
-     printf("%02X %02X %02X \n",tbuffer[0],tbuffer[1],tbuffer[2]);
+     printf("tbuffer af: %02X %02X %02X \n",tbuffer[0],tbuffer[1],tbuffer[2]);
      std::vector<uint8_t> responseMask(3);
 
      if (cmd == CMD_RESET) {
