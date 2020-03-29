@@ -38,7 +38,7 @@ int main(int argc, char **argv)
     bcm2835_spi_begin();
     bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);      // The default
     bcm2835_spi_setDataMode(BCM2835_SPI_MODE1);                   // The default
-    bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_16); // The default
+    bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_32); // The default
     bcm2835_spi_chipSelect(BCM2835_SPI_CS0);                      // The default
     bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS0, LOW);      // the default
 
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     char buf[] = { 0x00, 0x00, 0x00}; // Data to send
     bcm2835_spi_transfern(buf, sizeof(buf));
     // buf will now be filled with the data that was read from the slave
-    printf("Read from SPI: %02X  %02X  %02X  %02X \n", buf[0], buf[1], buf[2]);
+    printf("Read from SPI: %02X  %02X  %02X \n", buf[0], buf[1], buf[2]);
 
     bcm2835_spi_end();
     bcm2835_close();
