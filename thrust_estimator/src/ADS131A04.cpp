@@ -50,7 +50,7 @@ int ADS131A04::spi_init(const char* fileDir)
     com_serial = 0;
     exit(1);
   }
-  bits = 8;
+  bits = 24;
   mode = SPI_MODE_1;
 
   if (ioctl(fd, SPI_IOC_WR_MODE, &mode)<0)
@@ -111,7 +111,7 @@ void ADS131A04::spi_read(std::vector<uint8_t> &data,int fd)
   xfer[0].cs_change = 0; /* Keep CS activated */
   xfer[0].delay_usecs = 0; //delay in us
   xfer[0].speed_hz = 8000000; //speed
-  xfer[0].bits_per_word = 8; // bites per word 8
+  xfer[0].bits_per_word = 24; // bites per word 8
 
   int status = ioctl(fd, SPI_IOC_MESSAGE(1), xfer);
 
@@ -139,7 +139,7 @@ void ADS131A04::spi_write(std::vector<uint8_t> &data,int fd)
   xfer[0].cs_change = 0; /* Keep CS activated */
   xfer[0].delay_usecs = 0;
   xfer[0].speed_hz = 8000000;
-  xfer[0].bits_per_word = 8;
+  xfer[0].bits_per_word = 24;
 
   int status = ioctl(fd, SPI_IOC_MESSAGE(1), xfer);
 
