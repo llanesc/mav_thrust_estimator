@@ -50,11 +50,11 @@ int main(int argc, char **argv)
     // Can the read the reply bytes from the buffer.
     // If you tie MISO to MOSI, you should read back what was sent.
 
-    char buf[] = { 0x00, 0x00, 0x00}; // Data to send
+    char buf[] = { 0x00, 0x11, 0x00}; // Data to send
     bcm2835_spi_transfern(buf, sizeof(buf));
     printf("Read from SPI: %02X  %02X  %02X \n", buf[0], buf[1], buf[2]);
 
-    char buf2[] = { 0x00, 0x00, 0x00}; // Data to send
+    char buf2[] = { 0x00, 0x11, 0x00}; // Data to send
     bcm2835_spi_transfern(buf2, sizeof(buf2));
     // buf will now be filled with the data that was read from the slave
     printf("Read from SPI: %02X  %02X  %02X \n", buf2[0], buf2[1], buf2[2]);
