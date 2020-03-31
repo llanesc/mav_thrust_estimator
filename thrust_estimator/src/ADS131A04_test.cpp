@@ -38,7 +38,7 @@ int main(int argc, char **argv)
     bcm2835_spi_begin();
     bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);      // The default
     bcm2835_spi_setDataMode(BCM2835_SPI_MODE1);                   // The default
-    bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_16); // The default
+    bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_4096); // The default
     bcm2835_spi_chipSelect(BCM2835_SPI_CS0);                      // The default
     bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS0, LOW);      // the default
 
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 
     bcm2835_delay(50);
     char buf[3]; // Data to send
-    makeBuffer(buf,0x0065);
+    makeBuffer(buf,0x0011);
     bcm2835_spi_transfern(buf, sizeof(buf));
     printf("Read from SPI: %02X  %02X  %02X \n", buf[0], buf[1], buf[2]);
     bcm2835_delay(50);
