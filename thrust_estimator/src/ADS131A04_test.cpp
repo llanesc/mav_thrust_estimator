@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 
     bcm2835_delay(50);
     char buf[3]; // Data to send
-    makeBuffer(buf,0x0011);
+    makeBuffer(buf,0x0065);
     bcm2835_spi_transfern(buf, sizeof(buf));
     printf("Read from SPI: %02X  %02X  %02X \n", buf[0], buf[1], buf[2]);
     bcm2835_delay(50);
