@@ -38,9 +38,9 @@ int main(int argc, char **argv)
     bcm2835_spi_begin();
     bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);      // The default
     bcm2835_spi_setDataMode(BCM2835_SPI_MODE1);                   // The default
-    bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_32768); // The default
-    bcm2835_spi_chipSelect(BCM2835_SPI_CS1);                      // The default
-    bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS1, LOW);      // the default
+    bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_64); // The default
+    bcm2835_spi_chipSelect(BCM2835_SPI_CS0);                      // The default
+    bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS0, LOW);      // the default
 
     // Send a some bytes to the slave and simultaneously read
     // some bytes back from the slave
@@ -50,11 +50,13 @@ int main(int argc, char **argv)
     // Can the read the reply bytes from the buffer.
     // If you tie MISO to MOSI, you should read back what was sent.
 
-    char buf[] = { 0x00, 0x11, 0x00}; // Data to send
+    char buf[3]; // Data to send
+    makeBuffer(buf,0x0011);
     bcm2835_spi_transfern(buf, sizeof(buf));
     printf("Read from SPI: %02X  %02X  %02X \n", buf[0], buf[1], buf[2]);
 
-    char buf2[] = { 0x00, 0x11, 0x00}; // Data to send
+    char buf2[3]; // Data to send
+    makeBuffer(buf2,0x0011);
     bcm2835_spi_transfern(buf2, sizeof(buf2));
     // buf will now be filled with the data that was read from the slave
     printf("Read from SPI: %02X  %02X  %02X \n", buf2[0], buf2[1], buf2[2]);
