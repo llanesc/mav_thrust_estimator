@@ -99,10 +99,10 @@ namespace ADS131A04_ADC {
    private:
     bool ADC_ENA_;
     uint32_t channels_[4];
-    void makeBuffer_(std::vector<uint32_t> *buffer, uint16_t data);
+    void makeBuffer_(std::vector<uint8_t> *buffer, uint16_t data);
     int spi_init(const char* fileDir);
-    void spi_read(std::vector<uint32_t> &data,int fd);
-    void spi_write(std::vector<uint32_t> &data,int fd);
+    void spi_read(std::vector<uint8_t> &data,int fd);
+    void spi_write(std::vector<uint8_t> &data,int fd);
     int fd;
     int com_serial;
     int failcount;
@@ -110,6 +110,7 @@ namespace ADS131A04_ADC {
     uint32_t speed;
     uint16_t SPIdelay;
     uint8_t deselect_cs;
+    uint8_t mode;
 
   }; // end of class ADS131A04
 

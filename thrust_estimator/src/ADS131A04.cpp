@@ -41,12 +41,11 @@ int ADS131A04::spi_init(const char* fileDir)
 {
 
   int fd;
-  static uint8_t mode = SPI_MODE_1;
-
-  bits = 24;
+  bits = 8;
   speed = 1000000;
   SPIdelay = 1;
   deselect_cs = 1;
+  mode = SPI_MODE_1;
 
   if ((fd = open(fileDir,O_RDWR)) < 0)
   {
@@ -96,24 +95,24 @@ int ADS131A04::spi_init(const char* fileDir)
 
 }
 
-void ADS131A04::spi_read(std::vector<uint32_t> &data,int fd)
+void ADS131A04::spi_read(std::vector<uint8_t> &data,int fd)
 {
-  uint32_t mesg_len = data.size();
+  uint32_t nbytes = data.size();
 
   struct spi_ioc_transfer xfer[1];
   memset(xfer,0,sizeof xfer);
 
-  std::vector<uint32_t> nulldata;
+  std::vector<uint8_t> nulldata;
   nulldata.resize(data.size());
   std::fill(nulldata.begin(), nulldata.end(), 0);
 
   xfer[0].tx_buf = reinterpret_cast<__u64>(nulldata.data());
   xfer[0].rx_buf = reinterpret_cast<__u64>(data.data());
-  xfer[0].len = mesg_len;
-//  xfer[0].cs_change = deselect_cs; /* Keep CS activated */
+  xfer[0].len = nbytes;
+//xfer[0].cs_change = deselect_cs; /* Keep CS activated */
   xfer[0].delay_usecs = SPIdelay; //delay in us
   xfer[0].speed_hz = speed; //speed
-  xfer[0].bits_per_word = bits; // bits per word 8
+  xfer[0].bits_per_word = bits; // bites per word 8
 
   int status = ioctl(fd, SPI_IOC_MESSAGE(1), xfer);
 
@@ -128,20 +127,20 @@ void ADS131A04::spi_read(std::vector<uint32_t> &data,int fd)
 
 }
 
-void ADS131A04::spi_write(std::vector<uint32_t> &data,int fd)
+void ADS131A04::spi_write(std::vector<uint8_t> &data,int fd)
 {
 
-  uint32_t mesg_len = data.size();
+  int nbytes = data.size();
 
   struct spi_ioc_transfer xfer[1];
   memset(xfer,0,sizeof xfer);
   xfer[0].tx_buf = reinterpret_cast<__u64>(data.data());
   xfer[0].rx_buf = reinterpret_cast<__u64>(data.data());
-  xfer[0].len = mesg_len; /* Length of  command to write*/
-// xfer[0].cs_change = deselect_cs; /* Keep CS activated */
-  xfer[0].delay_usecs = SPIdelay;
-  xfer[0].speed_hz = speed;
-  xfer[0].bits_per_word = bits;
+  xfer[0].len = nbytes; /* Length of  command to write*/
+//xfer[0].cs_change = deselect_cs; /* Keep CS activated */
+  xfer[0].delay_usecs = SPIdelay; //delay in us
+  xfer[0].speed_hz = speed; //speed
+  xfer[0].bits_per_word = bits; // bites per word 8
 
   int status = ioctl(fd, SPI_IOC_MESSAGE(1), xfer);
 
@@ -164,60 +163,60 @@ void ADS131A04::readChannelsExt()
 bool ADS131A04::sendSystemCommand(systemCommands cmd)
 {
   if (ADC_ENA_) {
-    std::vector<uint32_t> tbuffer(5);
-    std::vector<uint32_t> rbuffer(5);
+    std::vector<uint8_t> tbuffer(15);
+    std::vector<uint8_t> rbuffer(15);
 
     uint16_t deviceWord = cmd;
     makeBuffer_(&tbuffer,deviceWord);
-    printf("%06X \n",tbuffer[0]);
+    printf("%02X %02X %02X \n",tbuffer[0],tbuffer[1],tbuffer[2]);
     spi_write(tbuffer,fd);
-    std::vector<uint32_t> responseMask(1);
+    std::vector<uint8_t> responseMask(3);
 
      if (cmd == CMD_RESET) {
        do {
        spi_read(rbuffer,fd);
-       printf("%06X \n",rbuffer[0]);
+       printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
        uint16_t DeviceWordResponse = READY;
        makeBuffer_(&responseMask,DeviceWordResponse);
-       } while(rbuffer[0] != responseMask[0]);
+       } while(rbuffer[0] != responseMask[0] | rbuffer[1] != responseMask[1] | rbuffer[2] != responseMask[2]);
      } else {
        spi_read(rbuffer,fd);
-       printf("%06X \n",rbuffer[0]);
+       printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
        uint16_t DeviceWordResponse = cmd;
        makeBuffer_(&responseMask,DeviceWordResponse);
      }
 
-     if (rbuffer[0] == responseMask[0]) {
+     if (rbuffer[0] == responseMask[0] & rbuffer[1] == responseMask[1] & rbuffer[2] == responseMask[2]) {
        return true;
      } else {
        return false;
      }
   } else {
-     std::vector<uint32_t> tbuffer(1);
-     std::vector<uint32_t> rbuffer(1);
+     std::vector<uint8_t> tbuffer(3);
+     std::vector<uint8_t> rbuffer(3);
 
      uint16_t deviceWord = cmd;
      makeBuffer_(&tbuffer,deviceWord);
-     printf("tbuffer b4: %06X \n",tbuffer[0]);
+     printf("tbuffer b4: %02X %02X %02X \n",tbuffer[0],tbuffer[1],tbuffer[2]);
      spi_write(tbuffer,fd);
-     printf("tbuffer af: %06X \n",tbuffer[0]);
-     std::vector<uint32_t> responseMask(1);
+     printf("tbuffer af: %02X %02X %02X \n",tbuffer[0],tbuffer[1],tbuffer[2]);
+     std::vector<uint8_t> responseMask(3);
 
      if (cmd == CMD_RESET) {
        do {
        spi_read(rbuffer,fd);
-       printf("%06X \n",rbuffer[0]);
+       printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
        uint16_t DeviceWordResponse = READY;
        makeBuffer_(&responseMask,DeviceWordResponse);
-       } while(rbuffer[0] != responseMask[0]);
+       } while(rbuffer[0] != responseMask[0] | rbuffer[1] != responseMask[1] | rbuffer[2] != responseMask[2]);
      } else {
        spi_read(rbuffer,fd);
-       printf("%06X \n",rbuffer[0]);
+       printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
        uint16_t DeviceWordResponse = cmd;
        makeBuffer_(&responseMask,cmd);
      }
 
-     if (rbuffer[0] == responseMask[0]) {
+     if (rbuffer[0] == responseMask[0] & rbuffer[1] == responseMask[1] & rbuffer[2] == responseMask[2]) {
        return true;
      } else {
        return false;
@@ -228,47 +227,47 @@ bool ADS131A04::sendSystemCommand(systemCommands cmd)
 
 uint32_t ADS131A04::readRegister(statusRegisterAddress statusADDR)
 {
-  std::vector<uint32_t> tbuffer(1);
-  std::vector<uint32_t> rbuffer(1);
+  std::vector<uint8_t> tbuffer(3);
+  std::vector<uint8_t> rbuffer(3);
   uint16_t deviceWord = RREG | statusADDR;
   makeBuffer_(&tbuffer,deviceWord);
   spi_write(tbuffer,fd);
 
   spi_read(rbuffer,fd);
 
-  return (rbuffer[0]);
+  return (rbuffer[2] | uint32_t(rbuffer[1]) << 8 | uint32_t(rbuffer[0]) << 16);
 }
 
 uint32_t ADS131A04::readRegister(configRegisterAddress configADDR)
 {
-  std::vector<uint32_t> tbuffer(1);
-  std::vector<uint32_t> rbuffer(1);
+  std::vector<uint8_t> tbuffer(3);
+  std::vector<uint8_t> rbuffer(3);
   uint16_t deviceWord = RREG | configADDR;
   makeBuffer_(&tbuffer,deviceWord);
   spi_write(tbuffer,fd);
 
   spi_read(rbuffer,fd);
 
-  return (rbuffer[0]);
+  return (rbuffer[2] | uint32_t(rbuffer[1]) << 8 | uint32_t(rbuffer[0]) << 16);
 }
 
 bool ADS131A04::writeRegister(configRegisterAddress configADDR, uint16_t data)
 {
-  std::vector<uint32_t> tbuffer(1);
-  std::vector<uint32_t> rbuffer(1);
+  std::vector<uint8_t> tbuffer(3);
+  std::vector<uint8_t> rbuffer(3);
   uint16_t deviceWord = WREG | configADDR | data;
   makeBuffer_(&tbuffer,deviceWord);
-  printf("%06X \n",tbuffer[0]);
+  printf("%02X %02X %02X \n",tbuffer[0],tbuffer[1],tbuffer[2]);
   spi_write(tbuffer,fd);
 
   spi_read(rbuffer,fd);
-  printf("%06X \n",rbuffer[0]);
+  printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
 
-  std::vector<uint32_t> responseMask(1);
+  std::vector<uint8_t> responseMask(3);
   uint16_t DeviceWordResponse = RREG | configADDR | data;
   makeBuffer_(&responseMask,DeviceWordResponse);
 
-  if (rbuffer[0] == responseMask[0]) {
+  if (rbuffer[0] == responseMask[0] & rbuffer[1] == responseMask[1] & rbuffer[2] == responseMask[2]) {
     return true;
   } else {
     return false;
@@ -293,7 +292,7 @@ void ADS131A04::readChannels()
 {
   uint32_t channels[4];
 
-  std::vector<uint32_t> outputBuffer(5);
+  std::vector<uint8_t> outputBuffer(15);
   spi_read(outputBuffer,fd);
 
 //  printf("%02X %02X %02X %02X %02X %02X\n", outputBuffer[3],outputBuffer[4],outputBuffer[5],outputBuffer[6],outputBuffer[7],outputBuffer[8]);
@@ -320,12 +319,12 @@ uint32_t* ADS131A04::getChannels()
   return channels_;
 }
 
-void ADS131A04::makeBuffer_(std::vector<uint32_t> *buffer, uint16_t data)
+void ADS131A04::makeBuffer_(std::vector<uint8_t> *buffer, uint16_t data)
 {
-
   std::fill(buffer->begin(), buffer->end(), 0);
 
-  (*buffer)[0] = data & 0xFFFF;
+  (*buffer)[1] = data & 0xFF;
+  (*buffer)[0] = data >> 8;
 }
 
 } /*namespace ADS131A04_ADC*/
