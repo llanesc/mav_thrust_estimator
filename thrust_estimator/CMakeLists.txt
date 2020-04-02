@@ -125,7 +125,7 @@ add_library(ADS131A04
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node src/thrust_estimator.cpp src/ADS131A04.cpp)
-add_executable(ADS131A04_test src/ADS131A04_test.cpp) 
+#add_executable(ADS131A04_test src/ADS131A04_test.cpp) 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -146,10 +146,10 @@ target_link_libraries(${PROJECT_NAME}_node
 #   /usr/lib/x86_64-linux-gnu/librt.so
 )
  
-target_link_libraries(ADS131A04_test 
-	${catkin_LIBRARIES}
-	/usr/local/lib/libbcm2835.a
-)
+#target_link_libraries(ADS131A04_test 
+#	${catkin_LIBRARIES}
+#	/usr/local/lib/libbcm2835.a
+#)
 	
 
 #############
