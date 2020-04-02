@@ -106,10 +106,10 @@ namespace ADS131A04_ADC {
     int fd;
     int com_serial;
     int failcount;
-    static uint8_t bits;
-    static uint32_t speed;
-    static uint16_t SPIdelay;
-    static uint8_t deselect_cs;
+    uint8_t bits;
+    uint32_t speed;
+    uint16_t SPIdelay;
+    uint8_t deselect_cs;
 
   }; // end of class ADS131A04
 
