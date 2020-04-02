@@ -103,7 +103,7 @@ void ADS131A04::spi_read(std::vector<uint32_t> &data,int fd)
   struct spi_ioc_transfer xfer[1];
   memset(xfer,0,sizeof xfer);
 
-  std::vector<uint8_t> nulldata;
+  std::vector<uint32_t> nulldata;
   nulldata.resize(data.size());
   std::fill(nulldata.begin(), nulldata.end(), 0);
 
@@ -169,25 +169,25 @@ bool ADS131A04::sendSystemCommand(systemCommands cmd)
 
     uint16_t deviceWord = cmd;
     makeBuffer_(&tbuffer,deviceWord);
-    printf("%02X %02X %02X \n",tbuffer[0],tbuffer[1],tbuffer[2]);
+    printf("%06X \n",tbuffer[0]);
     spi_write(tbuffer,fd);
     std::vector<uint32_t> responseMask(1);
 
      if (cmd == CMD_RESET) {
        do {
        spi_read(rbuffer,fd);
-       printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
+       printf("%06X \n",rbuffer[0]);
        uint16_t DeviceWordResponse = READY;
        makeBuffer_(&responseMask,DeviceWordResponse);
-       } while(rbuffer[0] != responseMask[0] | rbuffer[1] != responseMask[1] | rbuffer[2] != responseMask[2]);
+       } while(rbuffer[0] != responseMask[0]);
      } else {
        spi_read(rbuffer,fd);
-       printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
+       printf("%06X \n",rbuffer[0]);
        uint16_t DeviceWordResponse = cmd;
        makeBuffer_(&responseMask,DeviceWordResponse);
      }
 
-     if (rbuffer[0] == responseMask[0] & rbuffer[1] == responseMask[1] & rbuffer[2] == responseMask[2]) {
+     if (rbuffer[0] == responseMask[0]) {
        return true;
      } else {
        return false;
@@ -198,26 +198,26 @@ bool ADS131A04::sendSystemCommand(systemCommands cmd)
 
      uint16_t deviceWord = cmd;
      makeBuffer_(&tbuffer,deviceWord);
-     printf("tbuffer b4: %02X %02X %02X \n",tbuffer[0],tbuffer[1],tbuffer[2]);
+     printf("tbuffer b4: %06X \n",tbuffer[0]);
      spi_write(tbuffer,fd);
-     printf("tbuffer af: %02X %02X %02X \n",tbuffer[0],tbuffer[1],tbuffer[2]);
+     printf("tbuffer af: %06X \n",tbuffer[0]);
      std::vector<uint32_t> responseMask(1);
 
      if (cmd == CMD_RESET) {
        do {
        spi_read(rbuffer,fd);
-       printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
+       printf("%06X \n",rbuffer[0]);
        uint16_t DeviceWordResponse = READY;
        makeBuffer_(&responseMask,DeviceWordResponse);
-       } while(rbuffer[0] != responseMask[0] | rbuffer[1] != responseMask[1] | rbuffer[2] != responseMask[2]);
+       } while(rbuffer[0] != responseMask[0]);
      } else {
        spi_read(rbuffer,fd);
-       printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
+       printf("%06X \n",rbuffer[0]);
        uint16_t DeviceWordResponse = cmd;
        makeBuffer_(&responseMask,cmd);
      }
 
-     if (rbuffer[0] == responseMask[0] & rbuffer[1] == responseMask[1] & rbuffer[2] == responseMask[2]) {
+     if (rbuffer[0] == responseMask[0]) {
        return true;
      } else {
        return false;
@@ -236,7 +236,7 @@ uint32_t ADS131A04::readRegister(statusRegisterAddress statusADDR)
 
   spi_read(rbuffer,fd);
 
-  return (rbuffer[2] | uint32_t(rbuffer[1]) << 8 | uint32_t(rbuffer[0]) << 16);
+  return (rbuffer[0]);
 }
 
 uint32_t ADS131A04::readRegister(configRegisterAddress configADDR)
@@ -249,7 +249,7 @@ uint32_t ADS131A04::readRegister(configRegisterAddress configADDR)
 
   spi_read(rbuffer,fd);
 
-  return (rbuffer[2] | uint32_t(rbuffer[1]) << 8 | uint32_t(rbuffer[0]) << 16);
+  return (rbuffer[0]);
 }
 
 bool ADS131A04::writeRegister(configRegisterAddress configADDR, uint16_t data)
@@ -258,17 +258,17 @@ bool ADS131A04::writeRegister(configRegisterAddress configADDR, uint16_t data)
   std::vector<uint32_t> rbuffer(1);
   uint16_t deviceWord = WREG | configADDR | data;
   makeBuffer_(&tbuffer,deviceWord);
-  printf("%02X %02X %02X \n",tbuffer[0],tbuffer[1],tbuffer[2]);
+  printf("%06X \n",tbuffer[0]);
   spi_write(tbuffer,fd);
 
   spi_read(rbuffer,fd);
-  printf("%02X %02X %02X \n",rbuffer[0],rbuffer[1],rbuffer[2]);
+  printf("%06X \n",rbuffer[0]);
 
   std::vector<uint32_t> responseMask(1);
   uint16_t DeviceWordResponse = RREG | configADDR | data;
   makeBuffer_(&responseMask,DeviceWordResponse);
 
-  if (rbuffer[0] == responseMask[0] & rbuffer[1] == responseMask[1] & rbuffer[2] == responseMask[2]) {
+  if (rbuffer[0] == responseMask[0]) {
     return true;
   } else {
     return false;
