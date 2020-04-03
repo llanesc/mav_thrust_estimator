@@ -42,7 +42,7 @@ int ADS131A04::spi_init(const char* fileDir)
 
   int fd;
   bits = 8;
-  speed = 1000000;
+  speed = 50000;
   SPIdelay = 1;
   deselect_cs = 1;
   mode = SPI_MODE_1;
