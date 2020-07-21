@@ -38,8 +38,8 @@ bool readParameters(ros::NodeHandle& nodeHandle, int* ForceConversion) {
 
 int main(int argc, char** argv)
 {
-//  ros::init(argc,argv,"thrust_estimator");
-//  ros::NodeHandle nh;
+  ros::init(argc,argv,"thrust_estimator");
+  ros::NodeHandle nh;
 //
 //  ros::Publisher thrust_pub = nh.advertise<thrust_msgs::ThrustStrainGauge>("thrust_estimator/thrust", 10);
 //
