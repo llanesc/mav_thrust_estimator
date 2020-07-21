@@ -383,7 +383,7 @@ uint32_t* ADS131A04::getChannels()
 
 void ADS131A04::makeBuffer_(char buffer[], uint16_t data)
 {
-  memset(buffer, 0, sizeof buffer);
+  memset(buffer, 0, sizeof *buffer);
   buffer[1] = data & 0xFF;
   buffer[0] = data >> 8;
 }
