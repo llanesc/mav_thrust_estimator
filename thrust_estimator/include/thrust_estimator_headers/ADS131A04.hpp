@@ -1,17 +1,21 @@
-/*
- * Copyright (c) 2019, Christian Llanes, ADCL, Embry-Riddle Aeronautical University
+/*  ADS131A04
+ *  A driver for the ADS131A04 ADC.
+ *  Copyright (C) 2019-2020 Christian Llanes
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ *
  */
 
 #ifndef INCLUDE_THRUST_ESTIMATOR_HEADERS_ADS131A04_HPP_
@@ -27,6 +31,8 @@
 #include <linux/types.h>
 #include <linux/spi/spidev.h>
 #include "ros/ros.h"
+#include <linux/poll.h>
+#include <spilib.h>
 
 namespace ADS131A04_ADC {
 
@@ -73,15 +79,11 @@ namespace ADS131A04_ADC {
   #define READY             0xFF04
 
   #define CHANNEL  0
+
   static int myFd;
 
+
   class ADS131A04 {
-    volatile bool DRDY;
-
-    static ADS131A04 * classPtr;
-
-    static void readChannelsExt();
-
    public:
     ADS131A04();
     virtual ~ADS131A04();
@@ -98,12 +100,16 @@ namespace ADS131A04_ADC {
 
    private:
     bool ADC_ENA_;
+    bool DRDY;
     uint32_t channels_[4];
-    void makeBuffer_(std::vector<uint8_t> *buffer, uint16_t data);
-    int spi_init(const char* fileDir);
-    void spi_read(std::vector<uint8_t> &data,int fd);
-    void spi_write(std::vector<uint8_t> &data,int fd);
-    int fd;
+    void makeBuffer_(char* buffer, uint16_t data);
+//    int spi_init(const char* fileDir);
+//    int gpio_init(int pin);
+//    int gpio_read();
+//    void spi_read(std::vector<uint8_t> &data,int fd);
+//    void spi_write(std::vector<uint8_t> &data,int fd);
+    int spifd;
+    int gpiofd;
     int com_serial;
     int failcount;
     uint8_t bits;
