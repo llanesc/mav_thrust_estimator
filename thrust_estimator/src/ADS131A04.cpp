@@ -39,14 +39,14 @@ ADS131A04::ADS131A04(){
     ROS_ERROR("spi_init error.");
   }
 
-  ros::Duration(0.5).sleep();
+  ros::Duration(1).sleep();
 
   if (gpio_export(gpioPin) < 0)
   {
     ROS_ERROR("gpio_export error.");
   }
 
-  ros::Duration(0.5).sleep();
+  ros::Duration(1).sleep();
 
 
   if (gpio_set_direction(gpioPin,0) < 0)
@@ -54,13 +54,15 @@ ADS131A04::ADS131A04(){
     ROS_ERROR("gpio_set_direction error.");
   }
 
-  ros::Duration(0.5).sleep();
+  ros::Duration(1).sleep();
 
 
   if (gpio_set_edge(gpioPin,"falling") < 0)
   {
     ROS_ERROR("gpio_set_edge error.");
   }
+
+  ros::Duration(1).sleep();
 
 
   if ((gpiofd = gpio_pin_open(gpioPin)) < 0)
