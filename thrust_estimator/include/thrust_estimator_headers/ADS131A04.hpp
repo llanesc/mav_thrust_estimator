@@ -33,6 +33,7 @@
 #include "ros/ros.h"
 #include <linux/poll.h>
 #include <spilib.h>
+#include <gpiolib.h>
 
 namespace ADS131A04_ADC {
 
@@ -82,7 +83,6 @@ namespace ADS131A04_ADC {
 
   static int myFd;
 
-
   class ADS131A04 {
    public:
     ADS131A04();
@@ -103,6 +103,7 @@ namespace ADS131A04_ADC {
     bool DRDY;
     uint32_t channels_[4];
     void makeBuffer_(char buffer[], uint16_t data);
+    int pollRead();
 //    int spi_init(const char* fileDir);
 //    int gpio_init(int pin);
 //    int gpio_read();
@@ -110,8 +111,8 @@ namespace ADS131A04_ADC {
 //    void spi_write(std::vector<uint8_t> &data,int fd);
     int spifd;
     int gpiofd;
-    int com_serial;
-    int failcount;
+    int gpioPin;
+    struct pollfd pfd;
     uint8_t bits;
     uint32_t speed;
     uint16_t SPIdelay;

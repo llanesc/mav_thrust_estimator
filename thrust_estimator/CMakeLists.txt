@@ -159,6 +159,7 @@ target_link_libraries(${PROJECT_NAME}_node
    ${catkin_LIBRARIES}
    ADS131A04
    /usr/local/lib/libspi.a
+   /usr/local/lib/libgpio.a
 #   /usr/lib/x86_64-linux-gnu/libm.so
 #   /usr/lib/x86_64-linux-gnu/libcrypt.so
 #   /usr/lib/x86_64-linux-gnu/librt.so

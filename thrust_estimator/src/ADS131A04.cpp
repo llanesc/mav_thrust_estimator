@@ -32,12 +32,34 @@ ADS131A04::ADS131A04(){
   SPIdelay = 1;
   deselect_cs = 1;
   mode = SPI_MODE_1;
+  gpioPin = 14;
 
   if ((spifd = spi_init(fileName,bits,speed,SPIdelay,deselect_cs,mode)) < 0)
   {
     ROS_ERROR("spi_init error.");
   }
 
+  if (gpio_export(gpioPin) < 0)
+  {
+    ROS_ERROR("gpio_export error.");
+  }
+
+  if (gpio_set_direction(gpioPin,"in") < 0)
+  {
+    ROS_ERROR("gpio_set_direction error.");
+  }
+
+  if (gpio_set_edge(gpioPin,"falling") < 0)
+  {
+    ROS_ERROR("gpio_set_direction error.");
+  }
+
+  if ((gpiofd = gpio_pin_open(gpioPin)) < 0)
+  {
+    ROS_ERROR("gpio_pin_open error.");
+  }
+  pfd.fd = gpiofd;
+  pfd.events = POLLPRI | POLLERR;
 //  if ((gpiofd = gpio_init(24)) < 0)
 //  {
 //    ROS_ERROR("gpio error.");
@@ -49,6 +71,8 @@ ADS131A04::ADS131A04(){
 ADS131A04::~ADS131A04()
 {
   close(spifd);
+  gpio_unexport(gpioPin);
+  gpio_fd_close(gpiofd);
 }
 
 //int ADS131A04::spi_init(const char* fileDir)
@@ -346,9 +370,20 @@ bool ADS131A04::enableADC()
   }
 }
 
+int ADS131A04::pollRead()
+{
+    lseek(pfd.fd, 0, SEEK_SET);
+    char buffer[32] = {0};
+    int len = read(pfd.fd, buffer, 32);
+    return atoi(buffer);
+}
+
 void ADS131A04::update()
 {
-
+  if (pfd.revents & POLLPRI) {
+    int value = pollRead();
+    DRDY = (bool)value;
+  }
 }
 
 void ADS131A04::readChannels()
