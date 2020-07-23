@@ -39,7 +39,7 @@ ADS131A04::ADS131A04(){
     ROS_ERROR("spi_init error.");
   }
 
-  usleep(1000);
+  usleep(10000);
 
   if (gpio_export(gpioPin) < 0)
   {
