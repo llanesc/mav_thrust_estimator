@@ -54,24 +54,23 @@ ADS131A04::ADS131A04(){
     ROS_ERROR("gpio_set_direction error.");
   }
 
-  ros::Duration(1).sleep();
-
-
-  if (gpio_set_edge(gpioPin,"falling") < 0)
-  {
-    ROS_ERROR("gpio_set_edge error.");
-  }
-
-  ros::Duration(1).sleep();
-
-
-  if ((gpiofd = gpio_pin_open(gpioPin)) < 0)
-  {
-    ROS_ERROR("gpio_pin_open error.");
-  }
-
-  pfd.fd = gpiofd;
-  pfd.events = POLLPRI | POLLERR;
+//  ros::Duration(1).sleep();
+//
+//
+//  if (gpio_set_edge(gpioPin,"falling") < 0)
+//  {
+//    ROS_ERROR("gpio_set_edge error.");
+//  }
+//
+//
+//
+//  if ((gpiofd = gpio_pin_open(gpioPin)) < 0)
+//  {
+//    ROS_ERROR("gpio_pin_open error.");
+//  }
+//
+//  pfd.fd = gpiofd;
+//  pfd.events = POLLPRI | POLLERR;
 //  if ((gpiofd = gpio_init(24)) < 0)
 //  {
 //    ROS_ERROR("gpio error.");
@@ -83,8 +82,8 @@ ADS131A04::ADS131A04(){
 ADS131A04::~ADS131A04()
 {
   close(spifd);
-  gpio_unexport(gpioPin);
   gpio_fd_close(gpiofd);
+  gpio_unexport(gpioPin);
 }
 
 //int ADS131A04::spi_init(const char* fileDir)
