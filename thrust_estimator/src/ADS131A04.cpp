@@ -46,20 +46,20 @@ ADS131A04::ADS131A04(){
     ROS_ERROR("gpio_export error.");
   }
 
-  usleep(1000);
+  usleep(100000);
 
   if (gpio_set_direction(gpioPin,0) < 0)
   {
     ROS_ERROR("gpio_set_direction error.");
   }
 
-//  ros::Duration(1).sleep();
-//
-//
-//  if (gpio_set_edge(gpioPin,"falling") < 0)
-//  {
-//    ROS_ERROR("gpio_set_edge error.");
-//  }
+  usleep(100000);
+
+
+  if (gpio_set_edge(gpioPin,"falling") < 0)
+  {
+    ROS_ERROR("gpio_set_edge error.");
+  }
 //
 //
 //
