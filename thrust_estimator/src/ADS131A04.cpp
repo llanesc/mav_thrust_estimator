@@ -39,7 +39,7 @@ ADS131A04::ADS131A04(){
     ROS_ERROR("spi_init error.");
   }
 
-  usleep(10000);
+  usleep(1000);
 
   if (gpio_export(gpioPin) < 0)
   {
@@ -81,8 +81,8 @@ ADS131A04::ADS131A04(){
 ADS131A04::~ADS131A04()
 {
   close(spifd);
-  gpio_fd_close(gpiofd);
-  gpio_unexport(gpioPin);
+  //gpio_fd_close(gpiofd);
+  //gpio_unexport(gpioPin);
 }
 
 //int ADS131A04::spi_init(const char* fileDir)
