@@ -46,7 +46,7 @@ ADS131A04::ADS131A04(){
     ROS_ERROR("gpio_export error.");
   }
 
-  usleep(100000);
+  usleep(10000);
 
   if (gpio_set_direction(gpioPin,0) < 0)
   {
