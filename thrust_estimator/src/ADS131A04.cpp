@@ -53,13 +53,13 @@ ADS131A04::ADS131A04(){
     ROS_ERROR("gpio_set_direction error.");
   }
 
-  usleep(100000);
-
-
-  if (gpio_set_edge(gpioPin,"falling") < 0)
-  {
-    ROS_ERROR("gpio_set_edge error.");
-  }
+//  usleep(100000);
+//
+//
+//  if (gpio_set_edge(gpioPin,"falling") < 0)
+//  {
+//    ROS_ERROR("gpio_set_edge error.");
+//  }
 //
 //
 //
