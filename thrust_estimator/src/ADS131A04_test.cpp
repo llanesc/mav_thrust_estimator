@@ -16,52 +16,63 @@
 
 #include <bcm2835.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <spilib.h>
+#include <gpiolib.h>
 
 void makeBuffer(char *buffer, uint16_t data);
+uint8_t bits;
+uint32_t speed;
+uint16_t SPIdelay;
+uint8_t deselect_cs;
+uint8_t mode;
+int spifd;
+int gpiofd;
+int gpioPin;
 
 int main(int argc, char **argv)
 {
-    // If you call this, it will not actually access the GPIO
-// Use for testing
-//        bcm2835_set_debug(1);
+  const char* fileName = "/dev/spidev0.0";
+  bits = 8;
+  speed = 1000000;
+  SPIdelay = 1;
+  deselect_cs = 1;
+  mode = SPI_MODE_1;
+  gpioPin = 14;
 
-    if (!bcm2835_init())
-    {
-      printf("bcm2835_init failed. Are you running as root??\n");
-      return 1;
-    }
-    if (!bcm2835_spi_begin())
-    {
-      printf("bcm2835_spi_begin failed. Are you running as root??\n");
-      return 1;
-    }
-    bcm2835_spi_begin();
-    bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);      // The default
-    bcm2835_spi_setDataMode(BCM2835_SPI_MODE1);                   // The default
-    bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_4096); // The default
-    bcm2835_spi_chipSelect(BCM2835_SPI_CS0);                      // The default
-    bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS0, LOW);      // the default
-
-    // Send a some bytes to the slave and simultaneously read
-    // some bytes back from the slave
-    // Most SPI devices expect one or 2 bytes of command, after which they will send back
-    // some data. In such a case you will have the command bytes first in the buffer,
-    // followed by as many 0 bytes as you expect returned data bytes. After the transfer, you
-    // Can the read the reply bytes from the buffer.
-    // If you tie MISO to MOSI, you should read back what was sent.
-
-    char buf[] = {0x00, 0x00, 0x00}; // Data to send
-    bcm2835_spi_transfern(buf, sizeof(buf));
-    printf("Read from SPI: %02X  %02X  %02X \n", buf[0], buf[1], buf[2]);
-
-    char buf2[] = {0x00, 0x00, 0x00}; // Data to send
-    bcm2835_spi_transfern(buf2, sizeof(buf2));
-    // buf will now be filled with the data that was read from the slave
-    printf("Read from SPI: %02X  %02X  %02X \n", buf2[0], buf2[1], buf2[2]);
-
-    bcm2835_spi_end();
-    bcm2835_close();
+  if ((spifd = spi_init(fileName,bits,speed,SPIdelay,deselect_cs,mode)) < 0)
+  {
+    perror("spi_init error.");
     return 0;
+  }
+
+  if (gpio_export(gpioPin) < 0)
+  {
+    perror("gpio_export error.");
+    return 0;
+  }
+
+
+  if (gpio_set_direction(gpioPin,0) < 0)
+  {
+    perror("gpio_direction error.");
+    return 0;
+  }
+
+  if (gpio_set_edge(gpioPin,"falling") < 0)
+  {
+    perror("gpio_edge error.");
+        return 0;
+  }
+
+
+
+  if ((gpiofd = gpio_pin_open(gpioPin)) < 0)
+  {
+    perror("gpio_open error.");
+        return 0;
+  }
+
 }
 
 void makeBuffer(char *buffer, uint16_t data){
