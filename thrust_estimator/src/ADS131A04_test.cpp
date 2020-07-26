@@ -39,11 +39,11 @@ int main(int argc, char **argv)
   mode = SPI_MODE_1;
   gpioPin = 14;
 
-  if ((spifd = spi_init(fileName,bits,speed,SPIdelay,deselect_cs,mode)) < 0)
-  {
-    perror("spi_init error.");
-    return 0;
-  }
+//  if ((spifd = spi_init(fileName,bits,speed,SPIdelay,deselect_cs,mode)) < 0)
+//  {
+//    perror("spi_init error.");
+//    return 0;
+//  }
 
   if (gpio_export(gpioPin) < 0)
   {
