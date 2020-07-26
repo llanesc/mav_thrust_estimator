@@ -73,8 +73,7 @@ ADS131A04::ADS131A04(){
   pfd.fd = gpiofd;
   pfd.events = POLLPRI | POLLERR;
 
-  int rc;
-  rc = poll(&pfd,2,3000);
+  int poll(&pfd, 2, 3000);
 
   sendSystemCommand(CMD_NULL);
 }

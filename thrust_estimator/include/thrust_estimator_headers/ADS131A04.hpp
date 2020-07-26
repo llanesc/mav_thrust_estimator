@@ -31,7 +31,7 @@
 #include <linux/types.h>
 #include <linux/spi/spidev.h>
 #include "ros/ros.h"
-#include <linux/poll.h>
+#include <poll.h>
 #include <spilib.h>
 #include <gpiolib.h>
 
