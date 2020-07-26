@@ -401,7 +401,8 @@ void ADS131A04::readChannels()
 
   char outputBuffer[15];
   spi_read(outputBuffer,spifd,SPIdelay,speed,bits);
-  printf("%02X %02X %02X %02X %02X %02X\n", outputBuffer[3],outputBuffer[4],outputBuffer[5],outputBuffer[6],outputBuffer[7],outputBuffer[8]);
+  printf("%02X %02X %02X %02X %02X %02X", outputBuffer[3],outputBuffer[4],outputBuffer[5],outputBuffer[6],outputBuffer[7],outputBuffer[8]);
+  printf("%02X %02X %02X %02X %02X %02X \n", outputBuffer[9],outputBuffer[10],outputBuffer[11],outputBuffer[12],outputBuffer[13],outputBuffer[14]);
   channels[0] = (outputBuffer[5] | uint32_t(outputBuffer[4]) << 8 | uint32_t(outputBuffer[3]) << 16);
   channels[1] = (outputBuffer[8] | uint32_t(outputBuffer[7]) << 8 | uint32_t(outputBuffer[6]) << 16);
   channels[2] = (outputBuffer[11] | uint32_t(outputBuffer[10]) << 8 | uint32_t(outputBuffer[9]) << 16);
