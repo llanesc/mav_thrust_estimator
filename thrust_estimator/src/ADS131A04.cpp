@@ -28,8 +28,8 @@ ADS131A04::ADS131A04(){
   const char* fileName = "/dev/spidev0.0";
 
   bits = 8;
-  speed = 1000000;
-  SPIdelay = 1;
+  speed = 8192000;
+  SPIdelay = 0;
   deselect_cs = 1;
   mode = SPI_MODE_1;
   gpioPin = 14;
