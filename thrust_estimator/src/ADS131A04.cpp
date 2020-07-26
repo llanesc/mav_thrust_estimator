@@ -39,36 +39,36 @@ ADS131A04::ADS131A04(){
     ROS_ERROR("spi_init error.");
   }
 
-  sleep(1);
-
-  if (gpio_export(gpioPin) < 0)
-  {
-    ROS_ERROR("gpio_export error.");
-  }
-
-  sleep(1);
-
-  if (gpio_set_direction(gpioPin,0) < 0)
-  {
-    ROS_ERROR("gpio_set_direction error.");
-  }
-
-  sleep(1);
-
-  if (gpio_set_edge(gpioPin,"falling") < 0)
-  {
-    ROS_ERROR("gpio_set_edge error.");
-  }
-
-  sleep(1);
-
-
-  if ((gpiofd = gpio_pin_open(gpioPin)) < 0)
-  {
-    ROS_ERROR("gpio_pin_open error.");
-  }
-
-  sleep(1);
+//  sleep(1);
+//
+//  if (gpio_export(gpioPin) < 0)
+//  {
+//    ROS_ERROR("gpio_export error.");
+//  }
+//
+//  sleep(1);
+//
+//  if (gpio_set_direction(gpioPin,0) < 0)
+//  {
+//    ROS_ERROR("gpio_set_direction error.");
+//  }
+//
+//  sleep(1);
+//
+//  if (gpio_set_edge(gpioPin,"falling") < 0)
+//  {
+//    ROS_ERROR("gpio_set_edge error.");
+//  }
+//
+//  sleep(1);
+//
+//
+//  if ((gpiofd = gpio_pin_open(gpioPin)) < 0)
+//  {
+//    ROS_ERROR("gpio_pin_open error.");
+//  }
+//
+//  sleep(1);
 
   pfd.fd = gpiofd;
   pfd.events = POLLPRI | POLLERR;
