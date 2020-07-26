@@ -39,6 +39,8 @@ ADS131A04::ADS131A04(){
     ROS_ERROR("spi_init error.");
   }
 
+  sleep(1);
+
   if (gpio_export(gpioPin) < 0)
   {
     ROS_ERROR("gpio_export error.");
@@ -66,8 +68,11 @@ ADS131A04::ADS131A04(){
     ROS_ERROR("gpio_pin_open error.");
   }
 
+  sleep(1);
+
   pfd.fd = gpiofd;
   pfd.events = POLLPRI | POLLERR;
+
 
   sendSystemCommand(CMD_NULL);
 }
@@ -420,11 +425,9 @@ uint32_t* ADS131A04::getChannels()
   return channels_;
 }
 
-void ADS131A04::makeBuffer_(char* buffer, uint16_t data)
+void ADS131A04::makeBuffer_(char buffer[], uint16_t data)
 {
-  for(int i = 0;i < sizeof(buffer);i++){
-    buffer[i] &= 0x00;
-  }
+  memset(buffer, 0, sizeof *buffer);
   buffer[1] = data & 0xFF;
   buffer[0] = data >> 8;
 }
