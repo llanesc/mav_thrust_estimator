@@ -93,7 +93,7 @@ namespace ADS131A04_ADC {
     uint32_t readRegister(configRegisterAddress configADDR);
     bool writeRegister(configRegisterAddress, uint16_t data);
     bool enableADC();
-    void update();
+    void pollDRDY();
     bool isDRDY();
     void readChannels();
     uint32_t* getChannels();

@@ -386,14 +386,11 @@ int ADS131A04::pollRead()
     return atoi(buffer);
 }
 
-void ADS131A04::update()
+void ADS131A04::pollDRDY()
 {
   poll(&pfd, 1, -1);
 
   if (pfd.revents & POLLPRI) {
-    int value = pollRead();
-    DRDY = (bool)value;
-    printf("%02d", value);
     readChannels();
   }
 }
