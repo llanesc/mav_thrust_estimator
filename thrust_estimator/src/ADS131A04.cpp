@@ -73,8 +73,6 @@ ADS131A04::ADS131A04(){
   pfd.fd = gpiofd;
   pfd.events = POLLPRI | POLLERR;
 
-  //poll(&pfd, 2, 3000);
-
   sendSystemCommand(CMD_NULL);
 }
 
@@ -390,6 +388,8 @@ int ADS131A04::pollRead()
 
 void ADS131A04::update()
 {
+  poll(&pfd, 2, 100);
+
   if (pfd.revents & POLLPRI) {
     int value = pollRead();
     DRDY = (bool)value;
