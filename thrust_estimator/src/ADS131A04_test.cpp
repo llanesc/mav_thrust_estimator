@@ -59,13 +59,15 @@ int main(int argc, char **argv)
     return 0;
   }
 
+  sleep(1);
+
   if (gpio_set_edge(gpioPin,"falling") < 0)
   {
     perror("gpio_edge error.");
         return 0;
   }
 
-
+  sleep(1);
 
   if ((gpiofd = gpio_pin_open(gpioPin)) < 0)
   {
