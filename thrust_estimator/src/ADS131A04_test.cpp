@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include <bcm2835.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <spilib.h>
