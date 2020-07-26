@@ -51,6 +51,7 @@ int main(int argc, char **argv)
     return 0;
   }
 
+  sleep(1);
 
   if (gpio_set_direction(gpioPin,0) < 0)
   {
