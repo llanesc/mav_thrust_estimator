@@ -388,7 +388,7 @@ int ADS131A04::pollRead()
 
 void ADS131A04::update()
 {
-  poll(&pfd, 2, 100);
+  poll(&pfd, 1, 100);
 
   if (pfd.revents & POLLPRI) {
     int value = pollRead();
