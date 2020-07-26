@@ -51,9 +51,9 @@ int main(int argc, char **argv)
     return 0;
   }
 
-  sleep(1);
+  usleep(5000);
 
-  if (gpio_set_direction(gpioPin,0) < 0)
+  if (gpio_set_direction(gpioPin,1) < 0)
   {
     perror("gpio_direction error.");
     return 0;
