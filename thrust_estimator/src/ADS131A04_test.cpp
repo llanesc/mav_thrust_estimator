@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 
   sleep(1);
 
-  if (gpio_set_direction(gpioPin,1) < 0)
+  if (gpio_set_direction(gpioPin,0) < 0)
   {
     perror("gpio_direction error.");
     return 0;
