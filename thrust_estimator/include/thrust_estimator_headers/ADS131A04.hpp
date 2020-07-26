@@ -102,7 +102,7 @@ namespace ADS131A04_ADC {
     bool ADC_ENA_;
     bool DRDY;
     uint32_t channels_[4];
-    void makeBuffer_(char buffer[], uint16_t data);
+    void makeBuffer_(char *buffer, uint16_t data);
     int pollRead();
 //    int spi_init(const char* fileDir);
 //    int gpio_init(int pin);

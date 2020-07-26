@@ -80,8 +80,8 @@ ADS131A04::ADS131A04(){
 ADS131A04::~ADS131A04()
 {
   close(spifd);
-  //gpio_fd_close(gpiofd);
-  //gpio_unexport(gpioPin);
+  gpio_fd_close(gpiofd);
+  gpio_unexport(gpioPin);
 }
 
 //int ADS131A04::spi_init(const char* fileDir)
@@ -425,9 +425,11 @@ uint32_t* ADS131A04::getChannels()
   return channels_;
 }
 
-void ADS131A04::makeBuffer_(char buffer[], uint16_t data)
+void ADS131A04::makeBuffer_(char *buffer, uint16_t data)
 {
-  memset(buffer, 0, sizeof *buffer);
+  for(int i = 0;i < sizeof(buffer);i++){
+    buffer[i] &= 0x00;
+  }
   buffer[1] = data & 0xFF;
   buffer[0] = data >> 8;
 }
