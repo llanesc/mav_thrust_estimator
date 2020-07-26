@@ -388,12 +388,13 @@ int ADS131A04::pollRead()
 
 void ADS131A04::update()
 {
-  poll(&pfd, 1, 100);
+  poll(&pfd, 1, -1);
 
   if (pfd.revents & POLLPRI) {
     int value = pollRead();
     DRDY = (bool)value;
     printf("%02d", value);
+    readChannels();
   }
 }
 
